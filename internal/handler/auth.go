@@ -24,8 +24,12 @@ func NewAuth() *Auth {
 
 // @Summary Авторизация
 // @Tags Auth
+// @Router /auth/login [post]
 // @Produce json
-// @Router /login [post]
+// @Failure 200 {object} response.Login "Успешный ответ."
+// @Failure 400 {object} response.Error400 "Не валидный запрос."
+// @Failure 401 "Не верное имя пользователя или пароль."
+// @Failure 500 "Ошибка сервера."
 // @securityDefinitions.apikey Authorization
 // @in header
 // @Security Authorization
@@ -36,17 +40,18 @@ func (a *Auth) Login(c *fiber.Ctx) error {
 	var requetLogin request.Login
 
 	if err := c.BodyParser(&requetLogin); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(response.Error400{
+			Message: "Не валидный запрос.",
+		})
 	}
 
 	if err := validator.Validator.Struct(requetLogin); err != nil {
 		fieldErrors := validator.ValidateErr(err)
-		res := response.Error400{
-			Message: "Ошибка валидации",
-			Errors:  fieldErrors,
-		}
 
-		return c.Status(fiber.StatusBadRequest).JSON(res)
+		return c.Status(fiber.StatusBadRequest).JSON(response.Error400{
+			Message: "Ошибка валидации.",
+			Errors:  fieldErrors,
+		})
 	}
 
 	token, err := a.Service.Login(ctx, requetLogin)
@@ -55,7 +60,7 @@ func (a *Auth) Login(c *fiber.Ctx) error {
 	}
 
 	if token == nil {
-		return fiber.NewError(fiber.StatusUnauthorized, "invalid username or password")
+		return fiber.NewError(fiber.StatusUnauthorized, "Не верное имя пользователя или пароль.")
 	}
 
 	accessToken, err := token.SignedString([]byte(config.Cfg.App.Jwt.Secret))

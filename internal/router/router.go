@@ -9,12 +9,15 @@ import (
 )
 
 func SetupRouter(app *fiber.App) {
-	auth := handler.NewAuth()
+	authHandler := handler.NewAuth()
 
 	swagger.SwaggerInfo.Host = config.Cfg.Swagger.Host
 	swagger.SwaggerInfo.Version = config.TagVersion
 
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 
-	app.Post("/login", auth.Login)
+	api := app.Group("/api")
+	auth := api.Group("/auth")
+
+	auth.Post("/login", authHandler.Login)
 }

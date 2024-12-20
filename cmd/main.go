@@ -14,6 +14,7 @@ import (
 )
 
 // @title Core API
+// @BasePath /api
 // @securityDefinitions.apikey Authorization
 // @in header
 // @name Authorization
