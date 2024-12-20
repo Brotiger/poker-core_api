@@ -1,0 +1,20 @@
+info:
+  contact: {}
+  title: Core API
+paths:
+  /login:
+    post:
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - Authorization: []
+      summary: Авторизация
+      tags:
+      - Auth
+securityDefinitions:
+  Authorization:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

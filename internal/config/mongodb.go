@@ -6,8 +6,4 @@ type MongoDB struct {
 	Password  string `env:"MONGODB_PASSWORD"`
 	Database  string `env:"MONGODB_DATABASE" envDefault:"poker"`
 	TimeoutMs int    `env:"MONGODB_TIMEOUT_MS" envDefault:"30000"`
-
-	Collection struct {
-		User string `env:"MONGODB_COLLECTION_USER" envDefault:"users"`
-	}
 }

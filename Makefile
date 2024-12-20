@@ -11,3 +11,12 @@ up:
 run:
 	go run ./cmd
 .PHONY: run
+
+dev:
+	go install github.com/cespare/reflex@latest
+	go install github.com/swaggo/swag/cmd/swag@latest
+.PHONY: dev
+
+docs:
+	swag init -d ./cmd,./internal -o ./docs/swagger --parseDependency --parseInternal
+.PHONY: docs

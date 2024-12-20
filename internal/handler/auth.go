@@ -22,6 +22,13 @@ func NewAuth() *Auth {
 	}
 }
 
+// @Summary Авторизация
+// @Tags Auth
+// @Produce json
+// @Router /login [post]
+// @securityDefinitions.apikey Authorization
+// @in header
+// @Security Authorization
 func (a *Auth) Login(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Microsecond)
 	defer cancelCtx()
