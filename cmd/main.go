@@ -25,7 +25,7 @@ func main() {
 		config.Cfg.MongoDB.Password,
 	)
 	if err != nil {
-		log.Fatalf("failed to connect to mongodb: %v", err)
+		log.Fatalf("failed to connect to mongodb, error: %v", err)
 	}
 
 	connection.DB = mongodbClient.Database(config.Cfg.MongoDB.Database)

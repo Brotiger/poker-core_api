@@ -8,6 +8,7 @@ import (
 	"github.com/Brotiger/per-painted_poker-backend/internal/request"
 	"github.com/Brotiger/per-painted_poker-backend/internal/response"
 	"github.com/Brotiger/per-painted_poker-backend/internal/service"
+	"github.com/Brotiger/per-painted_poker-backend/internal/validator"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -29,6 +30,16 @@ func (a *Auth) Login(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(&requetLogin); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	if err := validator.Validator.Struct(requetLogin); err != nil {
+		fieldErrors := validator.ValidateErr(err)
+		res := response.Error400{
+			Message: "Ошибка валидации",
+			Errors:  fieldErrors,
+		}
+
+		return c.Status(fiber.StatusBadRequest).JSON(res)
 	}
 
 	token, err := a.Service.Login(ctx, requetLogin)
