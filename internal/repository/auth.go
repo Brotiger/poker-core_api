@@ -8,6 +8,7 @@ import (
 	"github.com/Brotiger/per-painted_poker-backend/internal/connection"
 	"github.com/Brotiger/per-painted_poker-backend/internal/model"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Auth struct{}
@@ -35,6 +36,17 @@ func (a *Auth) CreateRefreshToken(ctx context.Context, modelRefreshToken model.R
 		modelRefreshToken,
 	); err != nil {
 		return fmt.Errorf("failed to insert one, error: %w", err)
+	}
+
+	return nil
+}
+
+func (a *Auth) DeleteRefreshToken(ctx context.Context, userId primitive.ObjectID) error {
+	if _, err := connection.DB.Collection(config.Cfg.Table.RefreshToken).DeleteOne(
+		ctx,
+		bson.M{"userId": userId},
+	); err != nil {
+		return fmt.Errorf("failed to delete one, error: %w", err)
 	}
 
 	return nil

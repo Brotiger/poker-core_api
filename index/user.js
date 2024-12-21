@@ -1,4 +1,4 @@
-db.users.createIndex(
+db.user.createIndex(
     {
         "username": 1,
     },

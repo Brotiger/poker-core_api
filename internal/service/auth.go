@@ -47,6 +47,10 @@ func (a *Auth) Login(ctx context.Context, requetLogin request.Login) (*model.Use
 }
 
 func (a *Auth) GenerateTokens(ctx context.Context, modelUser model.User) (*response.Login, error) {
+	if err := a.Repository.DeleteRefreshToken(ctx, modelUser.Id); err != nil {
+		return nil, fmt.Errorf("failed to delete refresh token, error: %w", err)
+	}
+
 	accessTokenClaims := TokenClaims{
 		UserId: modelUser.Id.Hex(),
 		StandardClaims: jwt.StandardClaims{
