@@ -28,3 +28,14 @@ func (a *Auth) FindUser(ctx context.Context, username string) (*model.User, erro
 
 	return &modelUser, nil
 }
+
+func (a *Auth) CreateRefreshToken(ctx context.Context, modelRefreshToken model.RefreshToken) error {
+	if _, err := connection.DB.Collection(config.Cfg.Table.RefreshToken).InsertOne(
+		ctx,
+		modelRefreshToken,
+	); err != nil {
+		return fmt.Errorf("failed to insert one, error: %w", err)
+	}
+
+	return nil
+}

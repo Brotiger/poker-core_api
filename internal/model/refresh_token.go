@@ -6,11 +6,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type User struct {
+type RefreshToken struct {
 	Id        primitive.ObjectID `bson:"_id"`
-	Username  string             `bson:"username"`
-	Password  string             `bson:"password"`
-	Email     string             `bson:"email"`
+	UserId    primitive.ObjectID `bson:"userId"`
+	Token     string             `bson:"token"`
 	UpdatedAt time.Time          `bson:"updatedAt"`
 	CreatedAt time.Time          `bson:"createdAt"`
 }

@@ -54,21 +54,19 @@ func (a *Auth) Login(c *fiber.Ctx) error {
 		})
 	}
 
-	token, err := a.Service.Login(ctx, requetLogin)
+	modelUser, err := a.Service.Login(ctx, requetLogin)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
-	if token == nil {
+	if modelUser == nil {
 		return fiber.NewError(fiber.StatusUnauthorized, "Не верное имя пользователя или пароль.")
 	}
 
-	accessToken, err := token.SignedString([]byte(config.Cfg.App.Jwt.Secret))
+	res, err := a.Service.GenerateTokens(ctx, *modelUser)
 	if err != nil {
-		return c.SendStatus(fiber.StatusInternalServerError)
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(response.Login{
-		AccessToken: accessToken,
-	})
+	return c.JSON(res)
 }

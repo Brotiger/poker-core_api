@@ -1,5 +1,6 @@
 package config
 
 type Table struct {
-	User string `env:"MONGODB_TABLE_USER" envDefault:"users"`
+	User         string `env:"TABLE_USER" envDefault:"user"`
+	RefreshToken string `env:"TABLE_REFRESH_TOKEN" envDefault:"refresh_token"`
 }
