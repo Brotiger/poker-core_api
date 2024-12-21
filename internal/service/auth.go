@@ -11,6 +11,7 @@ import (
 	"github.com/Brotiger/per-painted_poker-backend/internal/request"
 	"github.com/Brotiger/per-painted_poker-backend/internal/response"
 	"github.com/golang-jwt/jwt"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -46,13 +47,13 @@ func (a *Auth) Login(ctx context.Context, requetLogin request.Login) (*model.Use
 	return modelUser, nil
 }
 
-func (a *Auth) GenerateTokens(ctx context.Context, modelUser model.User) (*response.Login, error) {
-	if err := a.Repository.DeleteRefreshToken(ctx, modelUser.Id); err != nil {
+func (a *Auth) GenerateTokens(ctx context.Context, userId primitive.ObjectID) (*response.Login, error) {
+	if err := a.Repository.DeleteRefreshToken(ctx, userId); err != nil {
 		return nil, fmt.Errorf("failed to delete refresh token, error: %w", err)
 	}
 
 	accessTokenClaims := TokenClaims{
-		UserId: modelUser.Id.Hex(),
+		UserId: userId.Hex(),
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Duration(config.Cfg.App.Jwt.AccessTokenExpireAt) * time.Minute).Unix(),
 		},
@@ -65,7 +66,7 @@ func (a *Auth) GenerateTokens(ctx context.Context, modelUser model.User) (*respo
 	}
 
 	refreshTokenClaims := TokenClaims{
-		UserId: modelUser.Id.Hex(),
+		UserId: userId.Hex(),
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Duration(config.Cfg.App.Jwt.RefreshTokenExpireAt) * time.Minute).Unix(),
 		},
@@ -79,7 +80,7 @@ func (a *Auth) GenerateTokens(ctx context.Context, modelUser model.User) (*respo
 
 	timeNow := time.Now()
 	a.Repository.CreateRefreshToken(ctx, model.RefreshToken{
-		UserId:    modelUser.Id,
+		UserId:    userId,
 		Token:     refreshTokenString,
 		UpdatedAt: timeNow,
 		CreatedAt: timeNow,
@@ -89,4 +90,20 @@ func (a *Auth) GenerateTokens(ctx context.Context, modelUser model.User) (*respo
 		AccessToken:  accessTokenString,
 		RefreshToken: refreshTokenString,
 	}, nil
+}
+
+func (a *Auth) VerifyToken(tokenString string) (*TokenClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(config.Cfg.App.Jwt.Secret), nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse with claims, error: %w", err)
+	}
+
+	tokenClaims, ok := token.Claims.(*TokenClaims)
+	if !ok || !token.Valid {
+		return nil, err
+	}
+
+	return tokenClaims, nil
 }
