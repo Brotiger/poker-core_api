@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/Brotiger/per-painted_poker-backend/internal/config"
-	"github.com/Brotiger/per-painted_poker-backend/internal/request"
-	"github.com/Brotiger/per-painted_poker-backend/internal/response"
-	"github.com/Brotiger/per-painted_poker-backend/internal/service"
+	"github.com/Brotiger/per-painted_poker-backend/internal/module/auth/request"
+	"github.com/Brotiger/per-painted_poker-backend/internal/module/auth/response"
+	"github.com/Brotiger/per-painted_poker-backend/internal/module/auth/service"
 	"github.com/Brotiger/per-painted_poker-backend/internal/validator"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"

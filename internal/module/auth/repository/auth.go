@@ -6,7 +6,7 @@ import (
 
 	"github.com/Brotiger/per-painted_poker-backend/internal/config"
 	"github.com/Brotiger/per-painted_poker-backend/internal/connection"
-	"github.com/Brotiger/per-painted_poker-backend/internal/model"
+	"github.com/Brotiger/per-painted_poker-backend/internal/module/auth/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

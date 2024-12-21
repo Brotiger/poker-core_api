@@ -33,13 +33,13 @@ const docTemplate = `{
                     "200": {
                         "description": "Успешный ответ.",
                         "schema": {
-                            "$ref": "#/definitions/response.Login"
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Login"
                         }
                     },
                     "400": {
                         "description": "Не валидный запрос.",
                         "schema": {
-                            "$ref": "#/definitions/response.Error400"
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error400"
                         }
                     },
                     "401": {
@@ -53,7 +53,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "response.Error400": {
+        "github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error400": {
             "type": "object",
             "properties": {
                 "errors": {},
@@ -62,7 +62,7 @@ const docTemplate = `{
                 }
             }
         },
-        "response.Login": {
+        "github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Login": {
             "type": "object",
             "properties": {
                 "access_token": {
