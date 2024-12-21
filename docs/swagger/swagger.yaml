@@ -6,7 +6,12 @@ definitions:
       message:
         type: string
     type: object
-  github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Login:
+  github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error401:
+    properties:
+      message:
+        type: string
+    type: object
+  github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Token:
     properties:
       access_token:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuYXV0aDAuY29tLyIsImF1ZCI6Imh0dHBzOi8vYXBpLmV4YW1wbGUuY29tL2NhbGFuZGFyL3YxLyIsInN1YiI6InVzcl8xMjMiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.CA7eaHjIHz5NxeIJoFK9krqaeZrPLwmMmgI_XiQiIkQ
@@ -27,18 +32,44 @@ paths:
         "200":
           description: Успешный ответ.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Login'
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Token'
         "400":
           description: Не валидный запрос.
           schema:
             $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error400'
         "401":
           description: Не верное имя пользователя или пароль.
+          schema:
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error401'
         "500":
           description: Ошибка сервера.
       security:
       - Authorization: []
       summary: Авторизация
+      tags:
+      - Auth
+  /auth/refresh:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ.
+          schema:
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Token'
+        "400":
+          description: Не валидный запрос.
+          schema:
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error400'
+        "401":
+          description: Неверный или просроченный токен обновления.
+          schema:
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error401'
+        "500":
+          description: Ошибка сервера.
+      security:
+      - Authorization: []
+      summary: Обновление токена
       tags:
       - Auth
 securityDefinitions:

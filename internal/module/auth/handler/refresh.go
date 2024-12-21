@@ -12,6 +12,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// @Summary Обновление токена
+// @Tags Auth
+// @Router /auth/refresh [post]
+// @Produce json
+// @Failure 200 {object} response.Token "Успешный ответ."
+// @Failure 400 {object} response.Error400 "Не валидный запрос."
+// @Failure 401 {object} response.Error401 "Неверный или просроченный токен обновления."
+// @Failure 500 "Ошибка сервера."
+// @securityDefinitions.apikey Authorization
+// @in header
+// @Security Authorization
 func (a *Auth) Refresh(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Microsecond)
 	defer cancelCtx()
@@ -34,7 +45,9 @@ func (a *Auth) Refresh(c *fiber.Ctx) error {
 
 	tokenClaims, err := a.RefreshTokenService.VerifyToken(requetRefresh.RefreshToken)
 	if err != nil {
-		return fiber.NewError(fiber.StatusUnauthorized, "Неверный или просроченный токен обновления.")
+		return c.Status(fiber.StatusUnauthorized).JSON(response.Error401{
+			Message: "Неверный или просроченный токен обновления.",
+		})
 	}
 
 	userId, err := primitive.ObjectIDFromHex(tokenClaims.UserId)

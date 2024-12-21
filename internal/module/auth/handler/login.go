@@ -15,9 +15,9 @@ import (
 // @Tags Auth
 // @Router /auth/login [post]
 // @Produce json
-// @Failure 200 {object} response.Login "Успешный ответ."
+// @Failure 200 {object} response.Token "Успешный ответ."
 // @Failure 400 {object} response.Error400 "Не валидный запрос."
-// @Failure 401 "Не верное имя пользователя или пароль."
+// @Failure 401 {object} response.Error401 "Не верное имя пользователя или пароль."
 // @Failure 500 "Ошибка сервера."
 // @securityDefinitions.apikey Authorization
 // @in header
@@ -48,7 +48,9 @@ func (a *Auth) Login(c *fiber.Ctx) error {
 	}
 
 	if modelUser == nil {
-		return fiber.NewError(fiber.StatusUnauthorized, "Не верное имя пользователя или пароль.")
+		return c.Status(fiber.StatusUnauthorized).JSON(response.Error401{
+			Message: "Не верное имя пользователя или пароль.",
+		})
 	}
 
 	res, err := a.RefreshTokenService.GenerateTokens(ctx, modelUser.Id)

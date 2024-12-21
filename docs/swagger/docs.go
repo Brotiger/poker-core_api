@@ -33,7 +33,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Успешный ответ.",
                         "schema": {
-                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Login"
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Token"
                         }
                     },
                     "400": {
@@ -43,7 +43,49 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Не верное имя пользователя или пароль."
+                        "description": "Не верное имя пользователя или пароль.",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error401"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера."
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Обновление токена",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ.",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Token"
+                        }
+                    },
+                    "400": {
+                        "description": "Не валидный запрос.",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error400"
+                        }
+                    },
+                    "401": {
+                        "description": "Неверный или просроченный токен обновления.",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error401"
+                        }
                     },
                     "500": {
                         "description": "Ошибка сервера."
@@ -62,7 +104,15 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Login": {
+        "github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error401": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Token": {
             "type": "object",
             "properties": {
                 "access_token": {

@@ -28,7 +28,7 @@ func NewRefreshToken() *RefreshToken {
 	}
 }
 
-func (rt *RefreshToken) GenerateTokens(ctx context.Context, userId primitive.ObjectID) (*response.Login, error) {
+func (rt *RefreshToken) GenerateTokens(ctx context.Context, userId primitive.ObjectID) (*response.Token, error) {
 	if err := rt.RefreshTokenRepository.DeleteRefreshToken(ctx, userId); err != nil {
 		return nil, fmt.Errorf("failed to delete refresh token, error: %w", err)
 	}
@@ -67,7 +67,7 @@ func (rt *RefreshToken) GenerateTokens(ctx context.Context, userId primitive.Obj
 		CreatedAt: timeNow,
 	})
 
-	return &response.Login{
+	return &response.Token{
 		AccessToken:  accessTokenString,
 		RefreshToken: refreshTokenString,
 	}, nil
