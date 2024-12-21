@@ -11,26 +11,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type Auth struct{}
+type RefreshToken struct{}
 
-func NewAuth() *Auth {
-	return &Auth{}
+func NewRefreshToken() *RefreshToken {
+	return &RefreshToken{}
 }
 
-func (a *Auth) FindUser(ctx context.Context, username string) (*model.User, error) {
-	var modelUser model.User
-
-	if err := connection.DB.Collection(config.Cfg.Table.User).FindOne(
-		ctx,
-		bson.M{"username": username},
-	).Decode(&modelUser); err != nil {
-		return nil, fmt.Errorf("failed to find one, error: %w", err)
-	}
-
-	return &modelUser, nil
-}
-
-func (a *Auth) CreateRefreshToken(ctx context.Context, modelRefreshToken model.RefreshToken) error {
+func (rt *RefreshToken) CreateRefreshToken(ctx context.Context, modelRefreshToken model.RefreshToken) error {
 	if _, err := connection.DB.Collection(config.Cfg.Table.RefreshToken).InsertOne(
 		ctx,
 		modelRefreshToken,
@@ -41,7 +28,7 @@ func (a *Auth) CreateRefreshToken(ctx context.Context, modelRefreshToken model.R
 	return nil
 }
 
-func (a *Auth) DeleteRefreshToken(ctx context.Context, userId primitive.ObjectID) error {
+func (rt *RefreshToken) DeleteRefreshToken(ctx context.Context, userId primitive.ObjectID) error {
 	if _, err := connection.DB.Collection(config.Cfg.Table.RefreshToken).DeleteOne(
 		ctx,
 		bson.M{"userId": userId},
