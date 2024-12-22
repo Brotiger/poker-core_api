@@ -6,4 +6,9 @@ type MongoDB struct {
 	Password  string `env:"MONGODB_PASSWORD"`
 	Database  string `env:"MONGODB_DATABASE" envDefault:"poker"`
 	TimeoutMs int    `env:"MONGODB_TIMEOUT_MS" envDefault:"30000"`
+
+	Table struct {
+		User         string `env:"MONGODB_TABLE_USER" envDefault:"user"`
+		RefreshToken string `env:"MONGODB_TABLE_REFRESH_TOKEN" envDefault:"refresh_token"`
+	}
 }

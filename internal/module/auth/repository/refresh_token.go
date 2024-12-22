@@ -18,7 +18,7 @@ func NewRefreshToken() *RefreshToken {
 }
 
 func (rt *RefreshToken) CreateRefreshToken(ctx context.Context, modelRefreshToken model.RefreshToken) error {
-	if _, err := connection.DB.Collection(config.Cfg.Table.RefreshToken).InsertOne(
+	if _, err := connection.DB.Collection(config.Cfg.MongoDB.Table.RefreshToken).InsertOne(
 		ctx,
 		modelRefreshToken,
 	); err != nil {
@@ -29,7 +29,7 @@ func (rt *RefreshToken) CreateRefreshToken(ctx context.Context, modelRefreshToke
 }
 
 func (rt *RefreshToken) DeleteRefreshToken(ctx context.Context, userId primitive.ObjectID) error {
-	if _, err := connection.DB.Collection(config.Cfg.Table.RefreshToken).DeleteOne(
+	if _, err := connection.DB.Collection(config.Cfg.MongoDB.Table.RefreshToken).DeleteOne(
 		ctx,
 		bson.M{"userId": userId},
 	); err != nil {
@@ -40,7 +40,7 @@ func (rt *RefreshToken) DeleteRefreshToken(ctx context.Context, userId primitive
 }
 
 func (rt *RefreshToken) CountRefreshToken(ctx context.Context, userId primitive.ObjectID) (int64, error) {
-	count, err := connection.DB.Collection(config.Cfg.Table.RefreshToken).CountDocuments(
+	count, err := connection.DB.Collection(config.Cfg.MongoDB.Table.RefreshToken).CountDocuments(
 		ctx,
 		bson.M{
 			"userId": userId,

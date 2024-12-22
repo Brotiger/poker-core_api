@@ -19,7 +19,7 @@ func NewUser() *User {
 func (u *User) FindUser(ctx context.Context, username string) (*model.User, error) {
 	var modelUser model.User
 
-	if err := connection.DB.Collection(config.Cfg.Table.User).FindOne(
+	if err := connection.DB.Collection(config.Cfg.MongoDB.Table.User).FindOne(
 		ctx,
 		bson.M{"username": username},
 	).Decode(&modelUser); err != nil {

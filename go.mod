@@ -3,7 +3,7 @@ module github.com/Brotiger/per-painted_poker-backend
 go 1.22.0
 
 require (
-	github.com/caarlos0/env v3.5.0+incompatible
+	github.com/caarlos0/env/v7 v7.1.0
 	github.com/go-playground/validator/v10 v10.23.0
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/golang-jwt/jwt v3.2.2+incompatible

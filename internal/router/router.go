@@ -9,7 +9,7 @@ import (
 )
 
 func SetupRouter(app *fiber.App) *fiber.Router {
-	swagger.SwaggerInfo.Host = config.Cfg.Swagger.Host
+	swagger.SwaggerInfo.Host = config.Cfg.Fiber.Swagger.Host
 	swagger.SwaggerInfo.Version = config.TagVersion
 
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
