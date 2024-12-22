@@ -6,20 +6,17 @@ import (
 	"time"
 
 	"github.com/Brotiger/per-painted_poker-backend/internal/config"
+	"github.com/Brotiger/per-painted_poker-backend/internal/module/auth/dto"
 	"github.com/Brotiger/per-painted_poker-backend/internal/module/auth/model"
 	"github.com/Brotiger/per-painted_poker-backend/internal/module/auth/repository"
-	"github.com/Brotiger/per-painted_poker-backend/internal/module/auth/response"
 	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+
+	sharedModel "github.com/Brotiger/per-painted_poker-backend/internal/shared/model"
 )
 
 type RefreshToken struct {
 	RefreshTokenRepository *repository.RefreshToken
-}
-
-type TokenClaims struct {
-	UserId string `json:"userId"`
-	jwt.StandardClaims
 }
 
 func NewRefreshToken() *RefreshToken {
@@ -28,12 +25,12 @@ func NewRefreshToken() *RefreshToken {
 	}
 }
 
-func (rt *RefreshToken) GenerateTokens(ctx context.Context, userId primitive.ObjectID) (*response.Token, error) {
+func (rt *RefreshToken) GenerateTokens(ctx context.Context, userId primitive.ObjectID) (*dto.Token, error) {
 	if err := rt.RefreshTokenRepository.DeleteRefreshToken(ctx, userId); err != nil {
 		return nil, fmt.Errorf("failed to delete refresh token, error: %w", err)
 	}
 
-	accessTokenClaims := TokenClaims{
+	accessTokenClaims := sharedModel.TokenClaims{
 		UserId: userId.Hex(),
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Duration(config.Cfg.App.Jwt.AccessTokenExpireAt) * time.Minute).Unix(),
@@ -46,7 +43,7 @@ func (rt *RefreshToken) GenerateTokens(ctx context.Context, userId primitive.Obj
 		return nil, fmt.Errorf("failed to signed string, error: %w", err)
 	}
 
-	refreshTokenClaims := TokenClaims{
+	refreshTokenClaims := sharedModel.TokenClaims{
 		UserId: userId.Hex(),
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Duration(config.Cfg.App.Jwt.RefreshTokenExpireAt) * time.Minute).Unix(),
@@ -67,24 +64,29 @@ func (rt *RefreshToken) GenerateTokens(ctx context.Context, userId primitive.Obj
 		CreatedAt: timeNow,
 	})
 
-	return &response.Token{
+	return &dto.Token{
 		AccessToken:  accessTokenString,
 		RefreshToken: refreshTokenString,
 	}, nil
 }
 
-func (rt *RefreshToken) VerifyToken(tokenString string) (*TokenClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(config.Cfg.App.Jwt.Secret), nil
-	})
+func (rt *RefreshToken) CheckRefreshToken(ctx context.Context, userId primitive.ObjectID) (bool, error) {
+	count, err := rt.RefreshTokenRepository.CountRefreshToken(ctx, userId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse with claims, error: %w", err)
+		return false, fmt.Errorf("failed to count refresh token, error: %w", err)
 	}
 
-	tokenClaims, ok := token.Claims.(*TokenClaims)
-	if !ok || !token.Valid {
-		return nil, err
+	if count == 0 {
+		return false, nil
 	}
 
-	return tokenClaims, nil
+	return true, nil
+}
+
+func (rt *RefreshToken) Logout(ctx context.Context, userId primitive.ObjectID) error {
+	if err := rt.RefreshTokenRepository.DeleteRefreshToken(ctx, userId); err != nil {
+		return fmt.Errorf("failed to delete refresh token, error: %w", err)
+	}
+
+	return nil
 }

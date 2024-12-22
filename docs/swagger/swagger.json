@@ -30,14 +30,38 @@
                     "400": {
                         "description": "Не валидный запрос.",
                         "schema": {
-                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error400"
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error400"
                         }
                     },
                     "401": {
                         "description": "Не верное имя пользователя или пароль.",
                         "schema": {
-                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error401"
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401"
                         }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера."
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Выход",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ."
                     },
                     "500": {
                         "description": "Ошибка сервера."
@@ -69,13 +93,13 @@
                     "400": {
                         "description": "Не валидный запрос.",
                         "schema": {
-                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error400"
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error400"
                         }
                     },
                     "401": {
                         "description": "Неверный или просроченный токен обновления.",
                         "schema": {
-                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error401"
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401"
                         }
                     },
                     "500": {
@@ -86,23 +110,6 @@
         }
     },
     "definitions": {
-        "github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error400": {
-            "type": "object",
-            "properties": {
-                "errors": {},
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Error401": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
         "github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Token": {
             "type": "object",
             "properties": {
@@ -113,6 +120,23 @@
                 "refresh_token": {
                     "type": "string",
                     "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuYXV0aDAuY29tLyIsImF1ZCI6Imh0dHBzOi8vYXBpLmV4YW1wbGUuY29tL2NhbGFuZGFyL3YxLyIsInN1YiI6InVzcl8xMjMiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.CA7eaHjIHz5NxeIJoFK9krqaeZrPLwmMmgI_XiQiIkQ"
+                }
+            }
+        },
+        "github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error400": {
+            "type": "object",
+            "properties": {
+                "errors": {},
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
                 }
             }
         }

@@ -38,3 +38,17 @@ func (rt *RefreshToken) DeleteRefreshToken(ctx context.Context, userId primitive
 
 	return nil
 }
+
+func (rt *RefreshToken) CountRefreshToken(ctx context.Context, userId primitive.ObjectID) (int64, error) {
+	count, err := connection.DB.Collection(config.Cfg.Table.RefreshToken).CountDocuments(
+		ctx,
+		bson.M{
+			"userId": userId,
+		},
+	)
+	if err != nil {
+		return 0, fmt.Errorf("failed to count documents, error: %w", err)
+	}
+
+	return count, nil
+}

@@ -7,6 +7,7 @@ import (
 	"github.com/Brotiger/per-painted_poker-backend/internal/config"
 	"github.com/Brotiger/per-painted_poker-backend/internal/module/auth/request"
 	"github.com/Brotiger/per-painted_poker-backend/internal/module/auth/response"
+	sharedResponse "github.com/Brotiger/per-painted_poker-backend/internal/shared/response"
 	"github.com/Brotiger/per-painted_poker-backend/internal/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -15,9 +16,9 @@ import (
 // @Tags Auth
 // @Router /auth/login [post]
 // @Produce json
-// @Failure 200 {object} response.Token "Успешный ответ."
-// @Failure 400 {object} response.Error400 "Не валидный запрос."
-// @Failure 401 {object} response.Error401 "Не верное имя пользователя или пароль."
+// @Success 200 {object} response.Token "Успешный ответ."
+// @Failure 400 {object} sharedResponse.Error400 "Не валидный запрос."
+// @Failure 401 {object} sharedResponse.Error401 "Не верное имя пользователя или пароль."
 // @Failure 500 "Ошибка сервера."
 // @securityDefinitions.apikey Authorization
 // @in header
@@ -28,7 +29,7 @@ func (a *Auth) Login(c *fiber.Ctx) error {
 
 	var requetLogin request.Login
 	if err := c.BodyParser(&requetLogin); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(response.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
 			Message: "Не валидный запрос.",
 		})
 	}
@@ -36,7 +37,7 @@ func (a *Auth) Login(c *fiber.Ctx) error {
 	if err := validator.Validator.Struct(requetLogin); err != nil {
 		fieldErrors := validator.ValidateErr(err)
 
-		return c.Status(fiber.StatusBadRequest).JSON(response.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
 			Message: "Ошибка валидации.",
 			Errors:  fieldErrors,
 		})
@@ -48,15 +49,18 @@ func (a *Auth) Login(c *fiber.Ctx) error {
 	}
 
 	if modelUser == nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(response.Error401{
+		return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Error401{
 			Message: "Не верное имя пользователя или пароль.",
 		})
 	}
 
-	res, err := a.RefreshTokenService.GenerateTokens(ctx, modelUser.Id)
+	dtoToken, err := a.RefreshTokenService.GenerateTokens(ctx, modelUser.Id)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(res)
+	return c.JSON(response.Token{
+		AccessToken:  dtoToken.AccessToken,
+		RefreshToken: dtoToken.RefreshToken,
+	})
 }
