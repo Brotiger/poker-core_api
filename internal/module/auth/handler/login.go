@@ -2,9 +2,11 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/Brotiger/per-painted_poker-backend/internal/config"
+	cError "github.com/Brotiger/per-painted_poker-backend/internal/module/auth/error"
 	"github.com/Brotiger/per-painted_poker-backend/internal/module/auth/request"
 	"github.com/Brotiger/per-painted_poker-backend/internal/module/auth/response"
 	sharedResponse "github.com/Brotiger/per-painted_poker-backend/internal/shared/response"
@@ -46,13 +48,13 @@ func (a *Auth) Login(c *fiber.Ctx) error {
 
 	modelUser, err := a.AuthService.Login(ctx, requetLogin)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
-	}
+		if errors.Is(err, cError.ErrUserNotFound) {
+			return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Error401{
+				Message: "Не верное имя пользователя или пароль.",
+			})
+		}
 
-	if modelUser == nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Error401{
-			Message: "Не верное имя пользователя или пароль.",
-		})
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
 	dtoToken, err := a.RefreshTokenService.GenerateTokens(ctx, modelUser.Id)

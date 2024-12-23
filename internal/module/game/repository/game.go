@@ -10,6 +10,7 @@ import (
 	"github.com/Brotiger/per-painted_poker-backend/internal/module/game/request"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -67,6 +68,32 @@ func (g *Game) GetGameCount(ctx context.Context, request request.List) (int64, e
 		ctx,
 		filter,
 		options.Count(),
+	)
+	if err != nil {
+		return 0, fmt.Errorf("failed to count documents, error: %w", err)
+	}
+
+	return count, nil
+}
+
+func (g *Game) CreateGame(ctx context.Context, modelGame model.Game) (primitive.ObjectID, error) {
+	var inserId primitive.ObjectID
+	result, err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).InsertOne(
+		ctx,
+		modelGame,
+	)
+	if err != nil {
+		return inserId, fmt.Errorf("failed to insert one, error: %w", err)
+	}
+
+	inserId = result.InsertedID.(primitive.ObjectID)
+	return inserId, nil
+}
+
+func (g *Game) CountUserGames(ctx context.Context, userId primitive.ObjectID) (int64, error) {
+	count, err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).CountDocuments(
+		ctx,
+		bson.M{"userId": userId},
 	)
 	if err != nil {
 		return 0, fmt.Errorf("failed to count documents, error: %w", err)

@@ -38,6 +38,44 @@ definitions:
       message:
         type: string
     type: object
+  request.Create:
+    properties:
+      max_players:
+        example: 5
+        maximum: 6
+        minimum: 3
+        type: integer
+      name:
+        example: test
+        type: string
+      password:
+        example: "123456"
+        type: string
+    type: object
+  response.Create:
+    properties:
+      _id:
+        example: 507f1f77bcf86cd799439011
+        type: string
+      maxPlayers:
+        example: 5
+        type: integer
+      name:
+        example: test
+        type: string
+      password:
+        example: "123456"
+        type: string
+      status:
+        example: created
+        type: string
+      users:
+        example:
+        - 507f1f77bcf86cd799439011
+        items:
+          type: string
+        type: array
+    type: object
   response.Game:
     properties:
       count_players:
@@ -49,6 +87,9 @@ definitions:
       max_players:
         example: 4
         type: integer
+      status:
+        example: created
+        type: string
       title:
         example: test
         type: string
@@ -56,7 +97,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  response.GameList:
+  response.List:
     properties:
       games:
         items:
@@ -144,7 +185,7 @@ paths:
       summary: Обновление токена
       tags:
       - Auth
-  /game/list:
+  /game:
     get:
       parameters:
       - example: 0
@@ -169,7 +210,36 @@ paths:
         "200":
           description: Успешный ответ.
           schema:
-            $ref: '#/definitions/response.GameList'
+            $ref: '#/definitions/response.List'
+        "400":
+          description: Не валидный запрос.
+          schema:
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error400'
+        "401":
+          description: Не верное имя пользователя или пароль.
+          schema:
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401'
+        "500":
+          description: Ошибка сервера.
+      security:
+      - Authorization: []
+      summary: Игра
+      tags:
+      - Game
+    post:
+      parameters:
+      - description: Body params
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/request.Create'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ.
+          schema:
+            $ref: '#/definitions/response.Create'
         "400":
           description: Не валидный запрос.
           schema:

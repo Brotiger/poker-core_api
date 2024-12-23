@@ -137,7 +137,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/game/list": {
+        "/game": {
             "get": {
                 "security": [
                     {
@@ -179,7 +179,54 @@ const docTemplate = `{
                     "200": {
                         "description": "Успешный ответ.",
                         "schema": {
-                            "$ref": "#/definitions/response.GameList"
+                            "$ref": "#/definitions/response.List"
+                        }
+                    },
+                    "400": {
+                        "description": "Не валидный запрос.",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error400"
+                        }
+                    },
+                    "401": {
+                        "description": "Не верное имя пользователя или пароль.",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера."
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Game"
+                ],
+                "summary": "Игра",
+                "parameters": [
+                    {
+                        "description": "Body params",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/request.Create"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Create"
                         }
                     },
                     "400": {
@@ -258,6 +305,59 @@ const docTemplate = `{
                 }
             }
         },
+        "request.Create": {
+            "type": "object",
+            "properties": {
+                "max_players": {
+                    "type": "integer",
+                    "maximum": 6,
+                    "minimum": 3,
+                    "example": 5
+                },
+                "name": {
+                    "type": "string",
+                    "example": "test"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "123456"
+                }
+            }
+        },
+        "response.Create": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string",
+                    "example": "507f1f77bcf86cd799439011"
+                },
+                "maxPlayers": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "name": {
+                    "type": "string",
+                    "example": "test"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "123456"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "created"
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "507f1f77bcf86cd799439011"
+                    ]
+                }
+            }
+        },
         "response.Game": {
             "type": "object",
             "properties": {
@@ -273,6 +373,10 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 4
                 },
+                "status": {
+                    "type": "string",
+                    "example": "created"
+                },
                 "title": {
                     "type": "string",
                     "example": "test"
@@ -283,7 +387,7 @@ const docTemplate = `{
                 }
             }
         },
-        "response.GameList": {
+        "response.List": {
             "type": "object",
             "properties": {
                 "games": {
