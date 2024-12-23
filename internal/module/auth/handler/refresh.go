@@ -38,11 +38,9 @@ func (a *Auth) Refresh(c *fiber.Ctx) error {
 	}
 
 	if err := validator.Validator.Struct(requetRefresh); err != nil {
-		fieldErrors := validator.ValidateErr(err)
-
 		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
 			Message: "Ошибка валидации.",
-			Errors:  fieldErrors,
+			Errors:  validator.ValidateErr(err),
 		})
 	}
 
