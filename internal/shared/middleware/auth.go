@@ -17,7 +17,7 @@ func Token(c *fiber.Ctx) error {
 	tokenClaims, err := serviceToken.VerifyToken(token)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(response.Error401{
-			Message: "Невалидный токен",
+			Message: "Невалидный токен.",
 		})
 	}
 

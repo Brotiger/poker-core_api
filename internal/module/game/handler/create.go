@@ -13,14 +13,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// @Summary Игра
+// @Summary Создание игры
 // @Tags Game
 // @Router /game [post]
 // @Produce json
 // @Param request body request.Create false "Body params"
 // @Success 200 {object} response.Create "Успешный ответ."
 // @Failure 400 {object} sharedResponse.Error400 "Не валидный запрос."
-// @Failure 401 {object} sharedResponse.Error401 "Не верное имя пользователя или пароль."
+// @Failure 401 {object} sharedResponse.Error401 "Невалидный токен."
 // @Failure 500 "Ошибка сервера."
 // @securityDefinitions.apikey Authorization
 // @in header
@@ -44,7 +44,7 @@ func (a *Game) Create(c *fiber.Ctx) error {
 	}
 
 	userId := c.Locals("userId").(primitive.ObjectID)
-	modelGame, err := a.GameService.Create(ctx, userId, requetCreate)
+	modelGame, err := a.GameService.CreateGame(ctx, userId, requetCreate)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
@@ -54,6 +54,7 @@ func (a *Game) Create(c *fiber.Ctx) error {
 		Status:     modelGame.Status,
 		Name:       modelGame.Name,
 		Password:   modelGame.Password,
+		OwnerId:    modelGame.OwnerId,
 		Users:      modelGame.Users,
 		MaxPlayers: modelGame.MaxPlayers,
 	})

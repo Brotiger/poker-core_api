@@ -10,8 +10,9 @@ type List struct {
 type Game struct {
 	Id           primitive.ObjectID `json:"id" example:"507f1f77bcf86cd799439011"`
 	Status       string             `json:"status" example:"created"`
+	OwnerId      primitive.ObjectID `json:"ownerId" example:"507f1f77bcf86cd799439011"`
 	Name         string             `json:"title" example:"test"`
-	CountPlayers int                `json:"count_players" example:"3"`
-	MaxPlayers   int                `json:"max_players" example:"4"`
-	WithPassword bool               `json:"with_password" example:"true"`
+	CountPlayers int                `json:"countPlayers" example:"3"`
+	MaxPlayers   int                `json:"maxPlayers" example:"4"`
+	WithPassword bool               `json:"withPassword" example:"true"`
 }

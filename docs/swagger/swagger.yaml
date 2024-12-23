@@ -63,6 +63,9 @@ definitions:
       name:
         example: test
         type: string
+      ownerId:
+        example: 507f1f77bcf86cd799439011
+        type: string
       password:
         example: "123456"
         type: string
@@ -78,22 +81,25 @@ definitions:
     type: object
   response.Game:
     properties:
-      count_players:
+      countPlayers:
         example: 3
         type: integer
       id:
         example: 507f1f77bcf86cd799439011
         type: string
-      max_players:
+      maxPlayers:
         example: 4
         type: integer
+      ownerId:
+        example: 507f1f77bcf86cd799439011
+        type: string
       status:
         example: created
         type: string
       title:
         example: test
         type: string
-      with_password:
+      withPassword:
         example: true
         type: boolean
     type: object
@@ -216,14 +222,14 @@ paths:
           schema:
             $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error400'
         "401":
-          description: Не верное имя пользователя или пароль.
+          description: Невалидный токен.
           schema:
             $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401'
         "500":
           description: Ошибка сервера.
       security:
       - Authorization: []
-      summary: Игра
+      summary: Получение списка игр
       tags:
       - Game
     post:
@@ -245,14 +251,30 @@ paths:
           schema:
             $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error400'
         "401":
-          description: Не верное имя пользователя или пароль.
+          description: Невалидный токен.
           schema:
             $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401'
         "500":
           description: Ошибка сервера.
       security:
       - Authorization: []
-      summary: Игра
+      summary: Создание игры
+      tags:
+      - Game
+  /game/start:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ.
+        "401":
+          description: Невалидный токен.
+        "500":
+          description: Ошибка сервера.
+      security:
+      - Authorization: []
+      summary: Запуск игры
       tags:
       - Game
 securityDefinitions:

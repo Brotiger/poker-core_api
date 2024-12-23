@@ -90,14 +90,30 @@ func (g *Game) CreateGame(ctx context.Context, modelGame model.Game) (primitive.
 	return inserId, nil
 }
 
-func (g *Game) CountUserGames(ctx context.Context, userId primitive.ObjectID) (int64, error) {
+func (g *Game) CountUserGames(ctx context.Context, ownerId primitive.ObjectID) (int64, error) {
 	count, err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).CountDocuments(
 		ctx,
-		bson.M{"userId": userId},
+		bson.M{"ownerId": ownerId},
 	)
 	if err != nil {
 		return 0, fmt.Errorf("failed to count documents, error: %w", err)
 	}
 
 	return count, nil
+}
+
+func (g *Game) UpdateGameStatus(ctx context.Context, userId primitive.ObjectID, status string) error {
+	if _, err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).UpdateOne(
+		ctx,
+		bson.M{"ownerId": userId},
+		bson.M{
+			"$set": bson.M{
+				"status": status,
+			},
+		},
+	); err != nil {
+		return fmt.Errorf("failed to update one, error: %w", err)
+	}
+
+	return nil
 }

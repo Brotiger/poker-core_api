@@ -13,6 +13,7 @@ func SetupAuthRouter(router fiber.Router) fiber.Router {
 
 	router.Use(sharedMiddleware.Token, middleware.AlreadyHasGame)
 	router.Get("/", gameHandler.List)
+	router.Post("/start", gameHandler.Start)
 
 	return router
 }

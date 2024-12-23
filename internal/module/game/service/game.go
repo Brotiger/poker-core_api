@@ -21,7 +21,7 @@ func NewGame() *Game {
 	}
 }
 
-func (g *Game) GetList(ctx context.Context, requetList request.List) ([]model.Game, int64, error) {
+func (g *Game) GetGameList(ctx context.Context, requetList request.List) ([]model.Game, int64, error) {
 	modelGames, err := g.GameRepository.GetGames(ctx, requetList)
 	if err != nil {
 		return nil, 0, fmt.Errorf("failed to get games, error: %w", err)
@@ -35,13 +35,14 @@ func (g *Game) GetList(ctx context.Context, requetList request.List) ([]model.Ga
 	return modelGames, total, nil
 }
 
-func (g *Game) Create(ctx context.Context, userId primitive.ObjectID, requestCreate request.Create) (*model.Game, error) {
+func (g *Game) CreateGame(ctx context.Context, userId primitive.ObjectID, requestCreate request.Create) (*model.Game, error) {
 	timeNow := time.Now()
 	modelGame := model.Game{
 		Status:     "created",
 		Name:       requestCreate.Name,
 		Password:   requestCreate.Password,
 		MaxPlayers: requestCreate.MaxPlayers,
+		OwnerId:    userId,
 		Users:      []primitive.ObjectID{userId},
 		UpdatedAt:  timeNow,
 		CreatedAt:  timeNow,
@@ -55,6 +56,14 @@ func (g *Game) Create(ctx context.Context, userId primitive.ObjectID, requestCre
 	modelGame.Id = insertId
 
 	return &modelGame, nil
+}
+
+func (g *Game) StartGame(ctx context.Context, userId primitive.ObjectID) error {
+	if err := g.GameRepository.UpdateGameStatus(ctx, userId, "started"); err != nil {
+		return fmt.Errorf("failed to update game status, error: %w", err)
+	}
+
+	return nil
 }
 
 func (g *Game) UserHasGame(ctx context.Context, userId primitive.ObjectID) (bool, error) {

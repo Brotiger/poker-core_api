@@ -12,14 +12,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary Игра
+// @Summary Получение списка игр
 // @Tags Game
 // @Router /game [get]
 // @Produce json
 // @Param request query request.List false "Query params"
 // @Success 200 {object} response.List "Успешный ответ."
 // @Failure 400 {object} sharedResponse.Error400 "Не валидный запрос."
-// @Failure 401 {object} sharedResponse.Error401 "Не верное имя пользователя или пароль."
+// @Failure 401 {object} sharedResponse.Error401 "Невалидный токен."
 // @Failure 500 "Ошибка сервера."
 // @securityDefinitions.apikey Authorization
 // @in header
@@ -45,7 +45,7 @@ func (a *Game) List(c *fiber.Ctx) error {
 		})
 	}
 
-	modelGames, total, err := a.GameService.GetList(ctx, requetList)
+	modelGames, total, err := a.GameService.GetGameList(ctx, requetList)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
@@ -55,6 +55,7 @@ func (a *Game) List(c *fiber.Ctx) error {
 		responseGames = append(responseGames, response.Game{
 			Id:           modelGame.Id,
 			Status:       modelGame.Status,
+			OwnerId:      modelGame.OwnerId,
 			Name:         modelGame.Name,
 			CountPlayers: len(modelGame.Users),
 			MaxPlayers:   modelGame.MaxPlayers,

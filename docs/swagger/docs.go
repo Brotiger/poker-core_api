@@ -150,7 +150,7 @@ const docTemplate = `{
                 "tags": [
                     "Game"
                 ],
-                "summary": "Игра",
+                "summary": "Получение списка игр",
                 "parameters": [
                     {
                         "minimum": 0,
@@ -189,7 +189,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Не верное имя пользователя или пароль.",
+                        "description": "Невалидный токен.",
                         "schema": {
                             "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401"
                         }
@@ -211,7 +211,7 @@ const docTemplate = `{
                 "tags": [
                     "Game"
                 ],
-                "summary": "Игра",
+                "summary": "Создание игры",
                 "parameters": [
                     {
                         "description": "Body params",
@@ -236,10 +236,37 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Не верное имя пользователя или пароль.",
+                        "description": "Невалидный токен.",
                         "schema": {
                             "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401"
                         }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера."
+                    }
+                }
+            }
+        },
+        "/game/start": {
+            "post": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Game"
+                ],
+                "summary": "Запуск игры",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ."
+                    },
+                    "401": {
+                        "description": "Невалидный токен."
                     },
                     "500": {
                         "description": "Ошибка сервера."
@@ -339,6 +366,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "test"
                 },
+                "ownerId": {
+                    "type": "string",
+                    "example": "507f1f77bcf86cd799439011"
+                },
                 "password": {
                     "type": "string",
                     "example": "123456"
@@ -361,7 +392,7 @@ const docTemplate = `{
         "response.Game": {
             "type": "object",
             "properties": {
-                "count_players": {
+                "countPlayers": {
                     "type": "integer",
                     "example": 3
                 },
@@ -369,9 +400,13 @@ const docTemplate = `{
                     "type": "string",
                     "example": "507f1f77bcf86cd799439011"
                 },
-                "max_players": {
+                "maxPlayers": {
                     "type": "integer",
                     "example": 4
+                },
+                "ownerId": {
+                    "type": "string",
+                    "example": "507f1f77bcf86cd799439011"
                 },
                 "status": {
                     "type": "string",
@@ -381,7 +416,7 @@ const docTemplate = `{
                     "type": "string",
                     "example": "test"
                 },
-                "with_password": {
+                "withPassword": {
                     "type": "boolean",
                     "example": true
                 }
