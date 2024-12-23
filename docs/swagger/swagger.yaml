@@ -20,6 +20,28 @@ definitions:
       message:
         type: string
     type: object
+  response.Game:
+    properties:
+      count_players:
+        type: integer
+      id:
+        type: string
+      max_players:
+        type: integer
+      title:
+        type: string
+      with_password:
+        type: boolean
+    type: object
+  response.GameList:
+    properties:
+      games:
+        items:
+          $ref: '#/definitions/response.Game'
+        type: array
+      size:
+        type: integer
+    type: object
 info:
   contact: {}
   title: Core API
@@ -86,6 +108,30 @@ paths:
       summary: Обновление токена
       tags:
       - Auth
+  /game/list:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ.
+          schema:
+            $ref: '#/definitions/response.GameList'
+        "400":
+          description: Не валидный запрос.
+          schema:
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error400'
+        "401":
+          description: Не верное имя пользователя или пароль.
+          schema:
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401'
+        "500":
+          description: Ошибка сервера.
+      security:
+      - Authorization: []
+      summary: Игра
+      tags:
+      - Game
 securityDefinitions:
   Authorization:
     in: header

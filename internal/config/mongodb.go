@@ -10,5 +10,6 @@ type MongoDB struct {
 	Table struct {
 		User         string `env:"MONGODB_TABLE_USER" envDefault:"user"`
 		RefreshToken string `env:"MONGODB_TABLE_REFRESH_TOKEN" envDefault:"refresh_token"`
+		Game         string `env:"MONGODB_TABLE_GAME" envDefault:"game"`
 	}
 }

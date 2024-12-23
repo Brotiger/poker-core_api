@@ -116,6 +116,45 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/game/list": {
+            "get": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Game"
+                ],
+                "summary": "Игра",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ.",
+                        "schema": {
+                            "$ref": "#/definitions/response.GameList"
+                        }
+                    },
+                    "400": {
+                        "description": "Не валидный запрос.",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error400"
+                        }
+                    },
+                    "401": {
+                        "description": "Не верное имя пользователя или пароль.",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера."
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -146,6 +185,40 @@ const docTemplate = `{
             "properties": {
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "response.Game": {
+            "type": "object",
+            "properties": {
+                "count_players": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "max_players": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "with_password": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.GameList": {
+            "type": "object",
+            "properties": {
+                "games": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.Game"
+                    }
+                },
+                "size": {
+                    "type": "integer"
                 }
             }
         }
