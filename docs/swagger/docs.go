@@ -29,6 +29,16 @@ const docTemplate = `{
                     "Auth"
                 ],
                 "summary": "Авторизация",
+                "parameters": [
+                    {
+                        "description": "Body params",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_request.Login"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Успешный ответ.",
@@ -92,6 +102,16 @@ const docTemplate = `{
                     "Auth"
                 ],
                 "summary": "Обновление токена",
+                "parameters": [
+                    {
+                        "description": "Body params",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_request.Refresh"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Успешный ответ.",
@@ -131,6 +151,30 @@ const docTemplate = `{
                     "Game"
                 ],
                 "summary": "Игра",
+                "parameters": [
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "example": 0,
+                        "name": "from",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "test",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "example": 20,
+                        "name": "size",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Успешный ответ.",
@@ -158,6 +202,32 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_Brotiger_per-painted_poker-backend_internal_module_auth_request.Login": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "password"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "username"
+                }
+            }
+        },
+        "github_com_Brotiger_per-painted_poker-backend_internal_module_auth_request.Refresh": {
+            "type": "object",
+            "properties": {
+                "refreshToken": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuYXV0aDAuY29tLyIsImF1ZCI6Imh0dHBzOi8vYXBpLmV4YW1wbGUuY29tL2NhbGFuZGFyL3YxLyIsInN1YiI6InVzcl8xMjMiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.CA7eaHjIHz5NxeIJoFK9krqaeZrPLwmMmgI_XiQiIkQ"
+                }
+            }
+        },
         "github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Token": {
             "type": "object",
             "properties": {
@@ -192,19 +262,24 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "count_players": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 3
                 },
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "507f1f77bcf86cd799439011"
                 },
                 "max_players": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 4
                 },
                 "title": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "test"
                 },
                 "with_password": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "example": true
                 }
             }
         },
@@ -217,8 +292,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/response.Game"
                     }
                 },
-                "size": {
-                    "type": "integer"
+                "total": {
+                    "type": "integer",
+                    "example": 100
                 }
             }
         }

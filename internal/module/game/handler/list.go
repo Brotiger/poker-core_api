@@ -16,6 +16,7 @@ import (
 // @Tags Game
 // @Router /game/list [get]
 // @Produce json
+// @Param request query request.List false "Query params"
 // @Success 200 {object} response.GameList "Успешный ответ."
 // @Failure 400 {object} sharedResponse.Error400 "Не валидный запрос."
 // @Failure 401 {object} sharedResponse.Error401 "Не верное имя пользователя или пароль."
@@ -27,7 +28,10 @@ func (a *Game) List(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Microsecond)
 	defer cancelCtx()
 
-	var requetList request.List
+	requetList := request.List{
+		Size: 20,
+	}
+
 	if err := c.QueryParser(&requetList); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
 			Message: "Не валидный запрос.",

@@ -16,6 +16,7 @@ import (
 // @Tags Auth
 // @Router /auth/login [post]
 // @Produce json
+// @Param request body request.Login false "Body params"
 // @Success 200 {object} response.Token "Успешный ответ."
 // @Failure 400 {object} sharedResponse.Error400 "Не валидный запрос."
 // @Failure 401 {object} sharedResponse.Error401 "Не верное имя пользователя или пароль."

@@ -18,6 +18,7 @@ import (
 // @Tags Auth
 // @Router /auth/refresh [post]
 // @Produce json
+// @Param request body request.Refresh false "Body params"
 // @Success 200 {object} response.Token "Успешный ответ."
 // @Failure 400 {object} sharedResponse.Error400 "Не валидный запрос."
 // @Failure 401 {object} sharedResponse.Error401 "Неверный или просроченный токен обновления."

@@ -1,5 +1,23 @@
 basePath: /api
 definitions:
+  github_com_Brotiger_per-painted_poker-backend_internal_module_auth_request.Login:
+    properties:
+      password:
+        example: password
+        type: string
+      username:
+        example: username
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  github_com_Brotiger_per-painted_poker-backend_internal_module_auth_request.Refresh:
+    properties:
+      refreshToken:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuYXV0aDAuY29tLyIsImF1ZCI6Imh0dHBzOi8vYXBpLmV4YW1wbGUuY29tL2NhbGFuZGFyL3YxLyIsInN1YiI6InVzcl8xMjMiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.CA7eaHjIHz5NxeIJoFK9krqaeZrPLwmMmgI_XiQiIkQ
+        type: string
+    type: object
   github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Token:
     properties:
       access_token:
@@ -23,14 +41,19 @@ definitions:
   response.Game:
     properties:
       count_players:
+        example: 3
         type: integer
       id:
+        example: 507f1f77bcf86cd799439011
         type: string
       max_players:
+        example: 4
         type: integer
       title:
+        example: test
         type: string
       with_password:
+        example: true
         type: boolean
     type: object
   response.GameList:
@@ -39,7 +62,8 @@ definitions:
         items:
           $ref: '#/definitions/response.Game'
         type: array
-      size:
+      total:
+        example: 100
         type: integer
     type: object
 info:
@@ -48,6 +72,12 @@ info:
 paths:
   /auth/login:
     post:
+      parameters:
+      - description: Body params
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_request.Login'
       produces:
       - application/json
       responses:
@@ -86,6 +116,12 @@ paths:
       - Auth
   /auth/refresh:
     post:
+      parameters:
+      - description: Body params
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_request.Refresh'
       produces:
       - application/json
       responses:
@@ -110,6 +146,23 @@ paths:
       - Auth
   /game/list:
     get:
+      parameters:
+      - example: 0
+        in: query
+        minimum: 0
+        name: from
+        required: true
+        type: integer
+      - example: test
+        in: query
+        name: name
+        type: string
+      - example: 20
+        in: query
+        minimum: 0
+        name: size
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
