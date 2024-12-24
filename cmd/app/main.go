@@ -10,6 +10,8 @@ import (
 	"github.com/Brotiger/per-painted_poker-backend/docs/swagger"
 	"github.com/Brotiger/per-painted_poker-backend/pkg/mongodb"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -20,7 +22,12 @@ import (
 // @name Authorization
 func main() {
 	ctx := context.Background()
-	app := fiber.New(fiber.Config{})
+	app := fiber.New(fiber.Config{
+		DisableStartupMessage: config.Cfg.Fiber.DisableStartupMessage,
+	})
+
+	app.Use(logger.New())
+	app.Use(recover.New())
 
 	mongodbCtx, cancelMongodbCtx := context.WithTimeout(ctx, time.Duration(config.Cfg.MongoDB.ConnectTimeoutMs)*time.Microsecond)
 	defer cancelMongodbCtx()

@@ -10,6 +10,7 @@ import (
 	sharedResponse "github.com/Brotiger/per-painted_poker-backend/app/shared/response"
 	"github.com/Brotiger/per-painted_poker-backend/app/validator"
 	"github.com/gofiber/fiber/v2"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -46,7 +47,8 @@ func (a *Game) Create(c *fiber.Ctx) error {
 	userId := c.Locals("userId").(primitive.ObjectID)
 	modelGame, err := a.GameService.CreateGame(ctx, userId, requetCreate)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		log.Errorf("failed to create game, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
 	return c.JSON(response.Create{

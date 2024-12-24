@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	cError "github.com/Brotiger/per-painted_poker-backend/app/module/auth/error"
 	"github.com/Brotiger/per-painted_poker-backend/app/module/auth/model"
 	"github.com/Brotiger/per-painted_poker-backend/app/module/auth/repository"
 	"github.com/Brotiger/per-painted_poker-backend/app/module/auth/request"
@@ -20,7 +21,7 @@ func NewAuth() *Auth {
 	}
 }
 
-func (a *Auth) Login(ctx context.Context, requetLogin request.Login) (*model.User, error) {
+func (a *Auth) GetUser(ctx context.Context, requetLogin request.Login) (*model.User, error) {
 	modelUser, err := a.UserRepository.FindUserByEmail(ctx, requetLogin.Email)
 	if err != nil {
 		return nil, fmt.Errorf("failed to find user, error: %w", err)
@@ -28,7 +29,7 @@ func (a *Auth) Login(ctx context.Context, requetLogin request.Login) (*model.Use
 
 	if err := bcrypt.CompareHashAndPassword([]byte(modelUser.Password), []byte(requetLogin.Password)); err != nil {
 		if err == bcrypt.ErrMismatchedHashAndPassword {
-			return nil, nil
+			return nil, cError.ErrCompareHashAndPassword
 		}
 
 		return nil, fmt.Errorf("failed to compare hash and password, error: %w", err)

@@ -11,6 +11,7 @@ import (
 	sharedService "github.com/Brotiger/per-painted_poker-backend/app/shared/service"
 	"github.com/Brotiger/per-painted_poker-backend/app/validator"
 	"github.com/gofiber/fiber/v2"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -52,17 +53,20 @@ func (a *Auth) Refresh(c *fiber.Ctx) error {
 			})
 		}
 
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		log.Errorf("failed to verify token, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
 	userId, err := primitive.ObjectIDFromHex(tokenClaims.UserId)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		log.Errorf("failed to get user id, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
 	exist, err := a.RefreshTokenService.CheckRefreshToken(ctx, requetRefresh.RefreshToken)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		log.Errorf("failed to check refresh token, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
 	if !exist {
@@ -73,7 +77,8 @@ func (a *Auth) Refresh(c *fiber.Ctx) error {
 
 	dtoToken, err := a.RefreshTokenService.GenerateTokens(ctx, userId)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		log.Errorf("failed to generate tokens, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
 	return c.JSON(response.Token{

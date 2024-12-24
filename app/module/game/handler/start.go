@@ -6,6 +6,7 @@ import (
 
 	"github.com/Brotiger/per-painted_poker-backend/app/config"
 	"github.com/gofiber/fiber/v2"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -25,7 +26,8 @@ func (a *Game) Start(c *fiber.Ctx) error {
 
 	userId := c.Locals("userId").(primitive.ObjectID)
 	if err := a.GameService.StartGame(ctx, userId); err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		log.Errorf("faile to start game, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
 	return c.SendStatus(fiber.StatusOK)

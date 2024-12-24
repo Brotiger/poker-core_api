@@ -10,6 +10,7 @@ import (
 	sharedResponse "github.com/Brotiger/per-painted_poker-backend/app/shared/response"
 	"github.com/Brotiger/per-painted_poker-backend/app/validator"
 	"github.com/gofiber/fiber/v2"
+	log "github.com/sirupsen/logrus"
 )
 
 // @Summary Получение списка игр
@@ -47,7 +48,8 @@ func (a *Game) List(c *fiber.Ctx) error {
 
 	modelGames, total, err := a.GameService.GetGameList(ctx, requetList)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		log.Errorf("failed to get game list, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
 	var responseGames []response.Game

@@ -12,6 +12,7 @@ import (
 	sharedResponse "github.com/Brotiger/per-painted_poker-backend/app/shared/response"
 	"github.com/Brotiger/per-painted_poker-backend/app/validator"
 	"github.com/gofiber/fiber/v2"
+	log "github.com/sirupsen/logrus"
 )
 
 // @Summary Авторизация
@@ -44,20 +45,22 @@ func (a *Auth) Login(c *fiber.Ctx) error {
 		})
 	}
 
-	modelUser, err := a.AuthService.Login(ctx, requetLogin)
+	modelUser, err := a.AuthService.GetUser(ctx, requetLogin)
 	if err != nil {
-		if errors.Is(err, cError.ErrUserNotFound) {
+		if errors.Is(err, cError.ErrUserNotFound) || errors.Is(err, cError.ErrCompareHashAndPassword) {
 			return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Error401{
 				Message: "Не верное имя пользователя или пароль.",
 			})
 		}
 
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		log.Errorf("failed to get user, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
 	dtoToken, err := a.RefreshTokenService.GenerateTokens(ctx, modelUser.Id)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		log.Errorf("failed to generate tokens, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
 	return c.JSON(response.Token{

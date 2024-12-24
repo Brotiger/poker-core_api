@@ -6,6 +6,7 @@ import (
 
 	"github.com/Brotiger/per-painted_poker-backend/app/config"
 	"github.com/gofiber/fiber/v2"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -24,11 +25,13 @@ func (a *Auth) Logout(c *fiber.Ctx) error {
 
 	userId, err := primitive.ObjectIDFromHex(*(c.Locals("userId")).(*string))
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		log.Errorf("failed to get user id, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
 	if err := a.RefreshTokenService.Logout(ctx, userId); err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		log.Errorf("failed to logout user, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
 	return c.SendStatus(fiber.StatusOK)
