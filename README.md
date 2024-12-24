@@ -24,6 +24,7 @@ make build # сборка проекта
 make up # запуск скомпилированного проекта
 make run # запуск без компиляции
 
+make seed
 make dev # установка dev зависимостей
 make docs # генерация swagger документации
 ```
