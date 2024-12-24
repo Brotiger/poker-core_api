@@ -21,7 +21,7 @@ func NewAuth() *Auth {
 }
 
 func (a *Auth) Login(ctx context.Context, requetLogin request.Login) (*model.User, error) {
-	modelUser, err := a.UserRepository.FindUser(ctx, requetLogin.Username)
+	modelUser, err := a.UserRepository.FindUserByEmail(ctx, requetLogin.Email)
 	if err != nil {
 		return nil, fmt.Errorf("failed to find user, error: %w", err)
 	}

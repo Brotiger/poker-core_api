@@ -18,11 +18,11 @@ func NewUser() *User {
 	return &User{}
 }
 
-func (u *User) FindUser(ctx context.Context, username string) (*model.User, error) {
+func (u *User) FindUserByEmail(ctx context.Context, email string) (*model.User, error) {
 	var modelUser model.User
 	if err := connection.DB.Collection(config.Cfg.MongoDB.Table.User).FindOne(
 		ctx,
-		bson.M{"username": username},
+		bson.M{"email": email},
 	).Decode(&modelUser); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, cError.ErrUserNotFound
