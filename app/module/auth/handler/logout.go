@@ -20,7 +20,7 @@ import (
 // @in header
 // @Security Authorization
 func (a *Auth) Logout(c *fiber.Ctx) error {
-	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Microsecond)
+	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
 	defer cancelCtx()
 
 	userId, err := primitive.ObjectIDFromHex(*(c.Locals("userId")).(*string))

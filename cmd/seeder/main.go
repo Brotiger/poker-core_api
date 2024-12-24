@@ -14,7 +14,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	mongodbCtx, cancelMongodbCtx := context.WithTimeout(ctx, time.Duration(config.Cfg.MongoDB.ConnectTimeoutMs)*time.Microsecond)
+	mongodbCtx, cancelMongodbCtx := context.WithTimeout(ctx, time.Duration(config.Cfg.MongoDB.ConnectTimeoutMs)*time.Millisecond)
 	defer cancelMongodbCtx()
 
 	mongodbClient, err := mongodb.Connect(

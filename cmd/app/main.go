@@ -29,7 +29,7 @@ func main() {
 	app.Use(logger.New())
 	app.Use(recover.New())
 
-	mongodbCtx, cancelMongodbCtx := context.WithTimeout(ctx, time.Duration(config.Cfg.MongoDB.ConnectTimeoutMs)*time.Microsecond)
+	mongodbCtx, cancelMongodbCtx := context.WithTimeout(ctx, time.Duration(config.Cfg.MongoDB.ConnectTimeoutMs)*time.Millisecond)
 	defer cancelMongodbCtx()
 
 	mongodbClient, err := mongodb.Connect(
