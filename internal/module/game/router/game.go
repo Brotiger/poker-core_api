@@ -9,9 +9,13 @@ import (
 
 func SetupAuthRouter(router fiber.Router) fiber.Router {
 	gameHandler := handler.NewGame()
-	router = router.Group("/game")
 
-	router.Use(sharedMiddleware.Token, middleware.AlreadyHasGame)
+	authMiddleware := sharedMiddleware.NewShared()
+	gameMiddleware := middleware.NewGame()
+
+	router.Use(authMiddleware.Token, gameMiddleware.AlreadyHasGame)
+
+	router = router.Group("/game")
 	router.Get("/", gameHandler.List)
 	router.Post("/start", gameHandler.Start)
 

@@ -10,19 +10,19 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (g *Game) AlreadyHasGame(c *fiber.Ctx) error {
+func (g *Game) GameCannotBeStarted(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Microsecond)
 	defer cancelCtx()
 
 	userId := c.Locals("userId").(primitive.ObjectID)
-	exits, err := g.ServiceGame.UserHasGame(ctx, userId)
+	canBeStarted, err := g.ServiceGame.GameCanBeStarted(ctx, userId)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
-	if exits {
+	if !canBeStarted {
 		return c.Status(fiber.StatusBadRequest).JSON(response.Error400{
-			Message: "У пользователя уже есть игра.",
+			Message: "Игра не может быть запущена.",
 		})
 	}
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	cError "github.com/Brotiger/per-painted_poker-backend/internal/module/game/error"
 	"github.com/Brotiger/per-painted_poker-backend/internal/module/game/model"
 	"github.com/Brotiger/per-painted_poker-backend/internal/module/game/repository"
 	"github.com/Brotiger/per-painted_poker-backend/internal/module/game/request"
@@ -73,6 +74,27 @@ func (g *Game) UserHasGame(ctx context.Context, userId primitive.ObjectID) (bool
 	}
 
 	if count == 0 {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func (g *Game) GameCanBeStarted(ctx context.Context, userId primitive.ObjectID) (bool, error) {
+	modelGame, err := g.GameRepository.GetGameByOwnerId(ctx, userId)
+	if err != nil {
+		if err == cError.ErrGameNotFound {
+			return false, nil
+		}
+
+		return false, fmt.Errorf("failed to get game by owner id, error: %w", err)
+	}
+
+	if modelGame.Status != "created" {
+		return false, nil
+	}
+
+	if modelGame.MaxPlayers != len(modelGame.Users) {
 		return false, nil
 	}
 

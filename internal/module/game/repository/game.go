@@ -6,11 +6,13 @@ import (
 
 	"github.com/Brotiger/per-painted_poker-backend/internal/config"
 	"github.com/Brotiger/per-painted_poker-backend/internal/connection"
+	cError "github.com/Brotiger/per-painted_poker-backend/internal/module/game/error"
 	"github.com/Brotiger/per-painted_poker-backend/internal/module/game/model"
 	"github.com/Brotiger/per-painted_poker-backend/internal/module/game/request"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -116,4 +118,22 @@ func (g *Game) UpdateGameStatus(ctx context.Context, userId primitive.ObjectID, 
 	}
 
 	return nil
+}
+
+func (g *Game) GetGameByOwnerId(ctx context.Context, ownerId primitive.ObjectID) (*model.Game, error) {
+	var modelGame model.Game
+	if err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).FindOne(
+		ctx,
+		bson.M{
+			"ownerId": ownerId,
+		},
+	).Decode(&modelGame); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, cError.ErrGameNotFound
+		}
+
+		return nil, fmt.Errorf("failed to find one, error: %w", err)
+	}
+
+	return &modelGame, nil
 }
