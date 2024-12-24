@@ -70,8 +70,8 @@ func (rt *RefreshToken) GenerateTokens(ctx context.Context, userId primitive.Obj
 	}, nil
 }
 
-func (rt *RefreshToken) CheckRefreshToken(ctx context.Context, userId primitive.ObjectID) (bool, error) {
-	count, err := rt.RefreshTokenRepository.CountRefreshToken(ctx, userId)
+func (rt *RefreshToken) CheckRefreshToken(ctx context.Context, token string) (bool, error) {
+	count, err := rt.RefreshTokenRepository.CountRefreshToken(ctx, token)
 	if err != nil {
 		return false, fmt.Errorf("failed to count refresh token, error: %w", err)
 	}

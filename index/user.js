@@ -1,6 +1,6 @@
 db.user.createIndex(
     {
-        "username": 1,
+        "email": 1,
     },
     {
         "background": true

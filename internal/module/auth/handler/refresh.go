@@ -60,7 +60,7 @@ func (a *Auth) Refresh(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
-	exist, err := a.RefreshTokenService.CheckRefreshToken(ctx, userId)
+	exist, err := a.RefreshTokenService.CheckRefreshToken(ctx, requetRefresh.RefreshToken)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}

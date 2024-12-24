@@ -23,15 +23,21 @@ func NewGame() *Game {
 }
 
 func (g *Game) GetGames(ctx context.Context, request request.List) ([]model.Game, error) {
+	hint := bson.D{
+		{Key: "createdAt", Value: 1},
+	}
+
 	filter := bson.M{}
+
 	if request.Name != "" {
 		filter["name"] = request.Name
+		hint = append(hint, bson.E{Key: "name", Value: 1})
 	}
 
 	cur, err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).Find(
 		ctx,
 		filter,
-		options.Find().SetSkip(request.From).SetLimit(request.Size),
+		options.Find().SetSkip(request.From).SetLimit(request.Size).SetSort(bson.M{"createdAt": 1}).SetHint(hint),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to find, error: %w", err)
@@ -61,15 +67,18 @@ func (g *Game) GetGames(ctx context.Context, request request.List) ([]model.Game
 }
 
 func (g *Game) GetGameCount(ctx context.Context, request request.List) (int64, error) {
+	hint := bson.D{}
 	filter := bson.M{}
+
 	if request.Name != "" {
 		filter["name"] = request.Name
+		hint = append(hint, bson.E{Key: "name", Value: 1})
 	}
 
 	count, err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).CountDocuments(
 		ctx,
 		filter,
-		options.Count(),
+		options.Count().SetHint(hint),
 	)
 	if err != nil {
 		return 0, fmt.Errorf("failed to count documents, error: %w", err)
@@ -96,6 +105,9 @@ func (g *Game) CountUserGames(ctx context.Context, ownerId primitive.ObjectID) (
 	count, err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).CountDocuments(
 		ctx,
 		bson.M{"ownerId": ownerId},
+		options.Count().SetHint(bson.D{
+			{Key: "ownerId", Value: 1},
+		}),
 	)
 	if err != nil {
 		return 0, fmt.Errorf("failed to count documents, error: %w", err)
@@ -113,6 +125,9 @@ func (g *Game) UpdateGameStatus(ctx context.Context, userId primitive.ObjectID, 
 				"status": status,
 			},
 		},
+		options.Update().SetHint(bson.D{
+			{Key: "ownerId", Value: 1},
+		}),
 	); err != nil {
 		return fmt.Errorf("failed to update one, error: %w", err)
 	}
@@ -127,6 +142,9 @@ func (g *Game) GetGameByOwnerId(ctx context.Context, ownerId primitive.ObjectID)
 		bson.M{
 			"ownerId": ownerId,
 		},
+		options.FindOne().SetHint(bson.D{
+			{Key: "ownerId", Value: 1},
+		}),
 	).Decode(&modelGame); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, cError.ErrGameNotFound

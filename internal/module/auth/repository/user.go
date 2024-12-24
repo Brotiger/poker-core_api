@@ -10,6 +10,7 @@ import (
 	"github.com/Brotiger/per-painted_poker-backend/internal/module/auth/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type User struct{}
@@ -23,6 +24,9 @@ func (u *User) FindUserByEmail(ctx context.Context, email string) (*model.User, 
 	if err := connection.DB.Collection(config.Cfg.MongoDB.Table.User).FindOne(
 		ctx,
 		bson.M{"email": email},
+		options.FindOne().SetHint(bson.D{
+			{Key: "email", Value: 1},
+		}),
 	).Decode(&modelUser); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, cError.ErrUserNotFound
