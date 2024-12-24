@@ -23,8 +23,8 @@ func ValidateErr(err error) map[string][]string {
 	for _, err := range err.(validator.ValidationErrors) {
 		textError := validatorError.DefaultError
 
-		if langError, ok := validatorError.Map[err.Tag()]; ok {
-			textError = langError.GetError(err.Param())
+		if objError, ok := validatorError.Map[err.Tag()]; ok {
+			textError = objError.GetError(err.Param())
 		}
 
 		field := fmt.Sprintf("%s%s", strings.ToLower(string(err.Field()[0])), err.Field()[1:])

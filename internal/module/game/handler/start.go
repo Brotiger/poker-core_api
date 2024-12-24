@@ -20,7 +20,6 @@ import (
 // @in header
 // @Security Authorization
 func (a *Game) Start(c *fiber.Ctx) error {
-	// @todo Нужно проверить не запущена ли уже игра
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Microsecond)
 	defer cancelCtx()
 
