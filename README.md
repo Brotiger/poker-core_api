@@ -28,3 +28,6 @@ make seed
 make dev # установка dev зависимостей
 make docs # генерация swagger документации
 ```
+
+## Ссылки
+* [Клиентское приложение](https://github.com/Brotiger/poker-app)
