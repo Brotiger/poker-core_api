@@ -7,4 +7,5 @@ type ValidatorError interface {
 var Map = map[string]ValidatorError{
 	"min":      &Min{},
 	"required": &Required{},
+	"email":    &Email{},
 }
