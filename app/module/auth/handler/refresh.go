@@ -24,9 +24,6 @@ import (
 // @Failure 400 {object} sharedResponse.Error400 "Не валидный запрос."
 // @Failure 401 {object} sharedResponse.Error401 "Неверный или просроченный токен обновления."
 // @Failure 500 "Ошибка сервера."
-// @securityDefinitions.apikey Authorization
-// @in header
-// @Security Authorization
 func (a *Auth) Refresh(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
 	defer cancelCtx()

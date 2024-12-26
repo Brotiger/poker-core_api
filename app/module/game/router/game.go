@@ -7,17 +7,15 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func SetupAuthRouter(router fiber.Router) fiber.Router {
+func SetupRouter(api fiber.Router) {
 	gameHandler := handler.NewGame()
 
 	authMiddleware := sharedMiddleware.NewShared()
 	gameMiddleware := middleware.NewGame()
 
-	router.Use(authMiddleware.Token, gameMiddleware.AlreadyHasGame)
-
-	router = router.Group("/game")
-	router.Get("/", gameHandler.List)
-	router.Post("/start", gameHandler.Start)
-
-	return router
+	game := api.Group("/game")
+	game.Use(authMiddleware.Token)
+	game.Get("", gameHandler.List)
+	game.Post("", gameMiddleware.AlreadyHasGame, gameHandler.Create)
+	game.Post("/start", gameHandler.Start)
 }

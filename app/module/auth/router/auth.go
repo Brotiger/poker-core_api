@@ -6,17 +6,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func SetupAuthRouter(router fiber.Router) fiber.Router {
+func SetupRouter(api fiber.Router) {
 	authHandler := handler.NewAuth()
-
 	authMiddleware := sharedMiddleware.NewShared()
 
-	router = router.Group("/auth")
-	router.Post("/login", authHandler.Login)
-	router.Post("/refresh", authHandler.Refresh)
-
-	router.Use(authMiddleware.Token)
-	router.Post("/logout", authHandler.Logout)
-
-	return router
+	auth := api.Group("/auth")
+	auth.Post("/login", authHandler.Login)
+	auth.Post("/refresh", authHandler.Refresh)
+	auth.Post("/logout", authMiddleware.Token, authHandler.Logout)
 }

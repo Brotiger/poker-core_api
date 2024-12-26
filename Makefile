@@ -22,5 +22,5 @@ dev:
 .PHONY: dev
 
 docs:
-	swag init -d ./cmd,./app,./app/module -o ./docs/swagger --parseDependency --parseInternal
+	swag init -d ./cmd/app,./app,./app/module -o ./docs/swagger --parseDependency --parseInternal
 .PHONY: docs

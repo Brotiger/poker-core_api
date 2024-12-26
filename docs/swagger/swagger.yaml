@@ -1,44 +1,33 @@
 basePath: /api
 definitions:
-  github_com_Brotiger_per-painted_poker-backend_internal_module_auth_request.Login:
+  github_com_Brotiger_per-painted_poker-backend_app_module_auth_request.Login:
     properties:
+      email:
+        example: example@example.com
+        type: string
       password:
         example: password
         type: string
-      username:
-        example: username
-        type: string
     required:
+    - email
     - password
-    - username
     type: object
-  github_com_Brotiger_per-painted_poker-backend_internal_module_auth_request.Refresh:
+  github_com_Brotiger_per-painted_poker-backend_app_module_auth_request.Refresh:
     properties:
       refreshToken:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuYXV0aDAuY29tLyIsImF1ZCI6Imh0dHBzOi8vYXBpLmV4YW1wbGUuY29tL2NhbGFuZGFyL3YxLyIsInN1YiI6InVzcl8xMjMiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.CA7eaHjIHz5NxeIJoFK9krqaeZrPLwmMmgI_XiQiIkQ
         type: string
     type: object
-  github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Token:
+  github_com_Brotiger_per-painted_poker-backend_app_module_auth_response.Token:
     properties:
-      access_token:
+      accessToken:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuYXV0aDAuY29tLyIsImF1ZCI6Imh0dHBzOi8vYXBpLmV4YW1wbGUuY29tL2NhbGFuZGFyL3YxLyIsInN1YiI6InVzcl8xMjMiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.CA7eaHjIHz5NxeIJoFK9krqaeZrPLwmMmgI_XiQiIkQ
         type: string
-      refresh_token:
+      refreshToken:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuYXV0aDAuY29tLyIsImF1ZCI6Imh0dHBzOi8vYXBpLmV4YW1wbGUuY29tL2NhbGFuZGFyL3YxLyIsInN1YiI6InVzcl8xMjMiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.CA7eaHjIHz5NxeIJoFK9krqaeZrPLwmMmgI_XiQiIkQ
         type: string
     type: object
-  github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error400:
-    properties:
-      errors: {}
-      message:
-        type: string
-    type: object
-  github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401:
-    properties:
-      message:
-        type: string
-    type: object
-  request.Create:
+  github_com_Brotiger_per-painted_poker-backend_app_module_game_request.Create:
     properties:
       max_players:
         example: 5
@@ -52,7 +41,7 @@ definitions:
         example: "123456"
         type: string
     type: object
-  response.Create:
+  github_com_Brotiger_per-painted_poker-backend_app_module_game_response.Create:
     properties:
       _id:
         example: 507f1f77bcf86cd799439011
@@ -79,7 +68,7 @@ definitions:
           type: string
         type: array
     type: object
-  response.Game:
+  github_com_Brotiger_per-painted_poker-backend_app_module_game_response.Game:
     properties:
       countPlayers:
         example: 3
@@ -103,15 +92,26 @@ definitions:
         example: true
         type: boolean
     type: object
-  response.List:
+  github_com_Brotiger_per-painted_poker-backend_app_module_game_response.List:
     properties:
       games:
         items:
-          $ref: '#/definitions/response.Game'
+          $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_module_game_response.Game'
         type: array
       total:
         example: 100
         type: integer
+    type: object
+  github_com_Brotiger_per-painted_poker-backend_app_shared_response.Error400:
+    properties:
+      errors: {}
+      message:
+        type: string
+    type: object
+  github_com_Brotiger_per-painted_poker-backend_app_shared_response.Error401:
+    properties:
+      message:
+        type: string
     type: object
 info:
   contact: {}
@@ -124,22 +124,22 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_request.Login'
+          $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_module_auth_request.Login'
       produces:
       - application/json
       responses:
         "200":
           description: Успешный ответ.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Token'
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_module_auth_response.Token'
         "400":
           description: Не валидный запрос.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error400'
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_shared_response.Error400'
         "401":
           description: Не верное имя пользователя или пароль.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401'
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_shared_response.Error401'
         "500":
           description: Ошибка сервера.
       security:
@@ -168,26 +168,24 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_request.Refresh'
+          $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_module_auth_request.Refresh'
       produces:
       - application/json
       responses:
         "200":
           description: Успешный ответ.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_module_auth_response.Token'
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_module_auth_response.Token'
         "400":
           description: Не валидный запрос.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error400'
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_shared_response.Error400'
         "401":
           description: Неверный или просроченный токен обновления.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401'
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_shared_response.Error401'
         "500":
           description: Ошибка сервера.
-      security:
-      - Authorization: []
       summary: Обновление токена
       tags:
       - Auth
@@ -216,15 +214,15 @@ paths:
         "200":
           description: Успешный ответ.
           schema:
-            $ref: '#/definitions/response.List'
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_module_game_response.List'
         "400":
           description: Не валидный запрос.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error400'
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_shared_response.Error400'
         "401":
           description: Невалидный токен.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401'
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_shared_response.Error401'
         "500":
           description: Ошибка сервера.
       security:
@@ -238,22 +236,22 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/request.Create'
+          $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_module_game_request.Create'
       produces:
       - application/json
       responses:
         "200":
           description: Успешный ответ.
           schema:
-            $ref: '#/definitions/response.Create'
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_module_game_response.Create'
         "400":
           description: Не валидный запрос.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error400'
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_shared_response.Error400'
         "401":
           description: Невалидный токен.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_internal_shared_response.Error401'
+            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_app_shared_response.Error401'
         "500":
           description: Ошибка сервера.
       security:
