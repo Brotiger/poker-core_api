@@ -23,7 +23,7 @@ func (a *Auth) Logout(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
 	defer cancelCtx()
 
-	userId, err := primitive.ObjectIDFromHex(*(c.Locals("userId")).(*string))
+	userId, err := primitive.ObjectIDFromHex((c.Locals("userId")).(string))
 	if err != nil {
 		log.Errorf("failed to get user id, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)

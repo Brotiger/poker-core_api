@@ -24,7 +24,12 @@ func (a *Game) Start(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
 	defer cancelCtx()
 
-	userId := c.Locals("userId").(primitive.ObjectID)
+	userId, err := primitive.ObjectIDFromHex(c.Locals("userId").(string))
+	if err != nil {
+		log.Errorf("failed to convert userId to ObjectID, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
+	}
+
 	if err := a.GameService.StartGame(ctx, userId); err != nil {
 		log.Errorf("faile to start game, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)

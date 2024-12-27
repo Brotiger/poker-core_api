@@ -44,7 +44,12 @@ func (a *Game) Create(c *fiber.Ctx) error {
 		})
 	}
 
-	userId := c.Locals("userId").(primitive.ObjectID)
+	userId, err := primitive.ObjectIDFromHex(c.Locals("userId").(string))
+	if err != nil {
+		log.Errorf("failed to convert userId to ObjectID, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
+	}
+
 	modelGame, err := a.GameService.CreateGame(ctx, userId, requetCreate)
 	if err != nil {
 		log.Errorf("failed to create game, error: %v", err)
