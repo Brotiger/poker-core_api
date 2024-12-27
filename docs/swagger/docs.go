@@ -312,6 +312,10 @@ const docTemplate = `{
         },
         "github_com_Brotiger_per-painted_poker-backend_app_module_game_request.Create": {
             "type": "object",
+            "required": [
+                "max_players",
+                "name"
+            ],
             "properties": {
                 "max_players": {
                     "type": "integer",
@@ -354,7 +358,7 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string",
-                    "example": "created"
+                    "example": "waiting"
                 },
                 "users": {
                     "type": "array",
@@ -382,17 +386,17 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 4
                 },
+                "name": {
+                    "type": "string",
+                    "example": "test"
+                },
                 "ownerId": {
                     "type": "string",
                     "example": "507f1f77bcf86cd799439011"
                 },
                 "status": {
                     "type": "string",
-                    "example": "created"
-                },
-                "title": {
-                    "type": "string",
-                    "example": "test"
+                    "example": "waiting"
                 },
                 "withPassword": {
                     "type": "boolean",

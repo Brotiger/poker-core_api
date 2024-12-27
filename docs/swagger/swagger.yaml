@@ -40,6 +40,9 @@ definitions:
       password:
         example: "123456"
         type: string
+    required:
+    - max_players
+    - name
     type: object
   github_com_Brotiger_per-painted_poker-backend_app_module_game_response.Create:
     properties:
@@ -59,7 +62,7 @@ definitions:
         example: "123456"
         type: string
       status:
-        example: created
+        example: waiting
         type: string
       users:
         example:
@@ -79,14 +82,14 @@ definitions:
       maxPlayers:
         example: 4
         type: integer
+      name:
+        example: test
+        type: string
       ownerId:
         example: 507f1f77bcf86cd799439011
         type: string
       status:
-        example: created
-        type: string
-      title:
-        example: test
+        example: waiting
         type: string
       withPassword:
         example: true

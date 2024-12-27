@@ -39,7 +39,7 @@ func (g *Game) GetGameList(ctx context.Context, requetList request.List) ([]mode
 func (g *Game) CreateGame(ctx context.Context, userId primitive.ObjectID, requestCreate request.Create) (*model.Game, error) {
 	timeNow := time.Now()
 	modelGame := model.Game{
-		Status:     "created",
+		Status:     "waiting",
 		Name:       requestCreate.Name,
 		Password:   requestCreate.Password,
 		MaxPlayers: requestCreate.MaxPlayers,
@@ -90,7 +90,7 @@ func (g *Game) GameCanBeStarted(ctx context.Context, userId primitive.ObjectID) 
 		return false, fmt.Errorf("failed to get game by owner id, error: %w", err)
 	}
 
-	if modelGame.Status != "created" {
+	if modelGame.Status != "waiting" {
 		return false, nil
 	}
 

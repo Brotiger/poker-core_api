@@ -1,6 +1,6 @@
 game = {
     "_id": "ObjectId",
-	"status": "enum:[created,started]",
+	"status": "enum:[waiting,started]",
 	"name": "string",
 	"password": "string",
 	"ownerId": "ObjectId",
