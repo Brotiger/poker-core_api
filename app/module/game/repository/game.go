@@ -23,16 +23,17 @@ func NewGame() *Game {
 }
 
 func (g *Game) GetGames(ctx context.Context, request request.List) ([]model.Game, error) {
-	hint := bson.D{
-		{Key: "createdAt", Value: 1},
-	}
-
+	hint := bson.D{}
 	filter := bson.M{}
 
-	if request.Name != "" {
-		filter["name"] = request.Name
+	if request.Name != nil {
+		filter["name"] = bson.M{
+			"$regex": request.Name,
+		}
 		hint = append(hint, bson.E{Key: "name", Value: 1})
 	}
+
+	hint = append(hint, bson.E{Key: "createdAt", Value: 1})
 
 	cur, err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).Find(
 		ctx,
@@ -70,7 +71,7 @@ func (g *Game) GetGameCount(ctx context.Context, request request.List) (int64, e
 	hint := bson.D{}
 	filter := bson.M{}
 
-	if request.Name != "" {
+	if request.Name != nil {
 		filter["name"] = request.Name
 		hint = append(hint, bson.E{Key: "name", Value: 1})
 	}
