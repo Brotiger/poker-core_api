@@ -52,7 +52,7 @@ func (a *Game) List(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	var responseGames []response.Game
+	responseGames := []response.Game{}
 	for _, modelGame := range modelGames {
 		responseGames = append(responseGames, response.Game{
 			Id:           modelGame.Id,

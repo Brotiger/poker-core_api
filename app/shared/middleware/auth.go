@@ -33,7 +33,7 @@ func (a *Auth) Token(c *fiber.Ctx) error {
 func getTokenFromHeader(c *fiber.Ctx) (string, error) {
 	header := c.Get("Authorization")
 	l := len(headerPrefix)
-	if len(header) < l+2 || !strings.EqualFold(header[:l], headerPrefix) {
+	if len(header) < l+2 || header[:l] != headerPrefix {
 		return "", errors.New("invalid token format")
 	}
 
