@@ -9,7 +9,7 @@ type Create struct {
 	Status     string               `json:"status" example:"waiting"`
 	Name       string               `json:"name" example:"test"`
 	Password   *string              `json:"password,omitempty" example:"123456"`
-	OwnerId    primitive.ObjectID   `json:"ownerId" example:"507f1f77bcf86cd799439011"`
+	OwnerId    primitive.ObjectID   `json:"owner_id" example:"507f1f77bcf86cd799439011"`
 	Users      []primitive.ObjectID `json:"users" example:"507f1f77bcf86cd799439011"`
-	MaxPlayers int                  `json:"maxPlayers" example:"5"`
+	MaxPlayers int                  `json:"max_players" example:"5"`
 }
