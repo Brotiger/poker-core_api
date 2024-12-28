@@ -8,7 +8,6 @@ import (
 	"github.com/Brotiger/per-painted_poker-backend/app/connection"
 	cError "github.com/Brotiger/per-painted_poker-backend/app/module/game/error"
 	"github.com/Brotiger/per-painted_poker-backend/app/module/game/model"
-	"github.com/Brotiger/per-painted_poker-backend/app/module/game/request"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -16,19 +15,25 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type Game struct{}
+type GameRepository struct{}
 
-func NewGame() *Game {
-	return &Game{}
+func NewGameRepository() *GameRepository {
+	return &GameRepository{}
 }
 
-func (g *Game) GetGames(ctx context.Context, request request.List) ([]model.Game, error) {
+type RequestGetGamesDTO struct {
+	Name *string
+	From int64
+	Size int64
+}
+
+func (gr *GameRepository) GetGames(ctx context.Context, requestGetGamesDTO RequestGetGamesDTO) ([]model.Game, error) {
 	hint := bson.D{}
 	filter := bson.M{}
 
-	if request.Name != nil {
+	if requestGetGamesDTO.Name != nil {
 		filter["name"] = bson.M{
-			"$regex": request.Name,
+			"$regex": requestGetGamesDTO.Name,
 		}
 		hint = append(hint, bson.E{Key: "name", Value: 1})
 	}
@@ -38,7 +43,7 @@ func (g *Game) GetGames(ctx context.Context, request request.List) ([]model.Game
 	cur, err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).Find(
 		ctx,
 		filter,
-		options.Find().SetSkip(request.From).SetLimit(request.Size).SetSort(bson.M{"createdAt": 1}).SetHint(hint),
+		options.Find().SetSkip(requestGetGamesDTO.From).SetLimit(requestGetGamesDTO.Size).SetSort(bson.M{"createdAt": 1}).SetHint(hint),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to find, error: %w", err)
@@ -67,12 +72,16 @@ func (g *Game) GetGames(ctx context.Context, request request.List) ([]model.Game
 	return modelGames, nil
 }
 
-func (g *Game) GetGameCount(ctx context.Context, request request.List) (int64, error) {
+type RequestGetGameCountDTO struct {
+	Name *string
+}
+
+func (gr *GameRepository) GetGameCount(ctx context.Context, requestGetGameCountDTO RequestGetGameCountDTO) (int64, error) {
 	hint := bson.D{}
 	filter := bson.M{}
 
-	if request.Name != nil {
-		filter["name"] = request.Name
+	if requestGetGameCountDTO.Name != nil {
+		filter["name"] = requestGetGameCountDTO.Name
 		hint = append(hint, bson.E{Key: "name", Value: 1})
 	}
 
@@ -88,7 +97,7 @@ func (g *Game) GetGameCount(ctx context.Context, request request.List) (int64, e
 	return count, nil
 }
 
-func (g *Game) CreateGame(ctx context.Context, modelGame model.Game) (primitive.ObjectID, error) {
+func (gr *GameRepository) CreateGame(ctx context.Context, modelGame model.Game) (primitive.ObjectID, error) {
 	var inserId primitive.ObjectID
 	result, err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).InsertOne(
 		ctx,
@@ -102,7 +111,7 @@ func (g *Game) CreateGame(ctx context.Context, modelGame model.Game) (primitive.
 	return inserId, nil
 }
 
-func (g *Game) CountUserGames(ctx context.Context, ownerId primitive.ObjectID) (int64, error) {
+func (gr *GameRepository) CountUserGames(ctx context.Context, ownerId primitive.ObjectID) (int64, error) {
 	count, err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).CountDocuments(
 		ctx,
 		bson.M{"ownerId": ownerId},
@@ -117,7 +126,7 @@ func (g *Game) CountUserGames(ctx context.Context, ownerId primitive.ObjectID) (
 	return count, nil
 }
 
-func (g *Game) UpdateGameStatus(ctx context.Context, userId primitive.ObjectID, status string) error {
+func (gr *GameRepository) UpdateGameStatus(ctx context.Context, userId primitive.ObjectID, status string) error {
 	if _, err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).UpdateOne(
 		ctx,
 		bson.M{"ownerId": userId},
@@ -136,7 +145,7 @@ func (g *Game) UpdateGameStatus(ctx context.Context, userId primitive.ObjectID, 
 	return nil
 }
 
-func (g *Game) GetGameByOwnerId(ctx context.Context, ownerId primitive.ObjectID) (*model.Game, error) {
+func (gr *GameRepository) GetGameByOwnerId(ctx context.Context, ownerId primitive.ObjectID) (*model.Game, error) {
 	var modelGame model.Game
 	if err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).FindOne(
 		ctx,

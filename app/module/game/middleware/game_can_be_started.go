@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (g *Game) GameCannotBeStarted(c *fiber.Ctx) error {
+func (gm *GameMiddleware) GameCannotBeStarted(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
 	defer cancelCtx()
 
@@ -21,7 +21,7 @@ func (g *Game) GameCannotBeStarted(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	canBeStarted, err := g.ServiceGame.GameCanBeStarted(ctx, userId)
+	canBeStarted, err := gm.gameService.GameCanBeStarted(ctx, userId)
 	if err != nil {
 		log.Errorf("failed to check if game can be started, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)

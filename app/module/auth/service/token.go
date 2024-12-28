@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/Brotiger/per-painted_poker-backend/app/config"
-	"github.com/Brotiger/per-painted_poker-backend/app/module/auth/dto"
 	"github.com/Brotiger/per-painted_poker-backend/app/module/auth/model"
 	"github.com/Brotiger/per-painted_poker-backend/app/module/auth/repository"
 	"github.com/golang-jwt/jwt"
@@ -15,17 +14,22 @@ import (
 	sharedModel "github.com/Brotiger/per-painted_poker-backend/app/shared/model"
 )
 
-type RefreshToken struct {
-	RefreshTokenRepository *repository.RefreshToken
+type RefreshTokenService struct {
+	RefreshTokenRepository *repository.RefreshTokenRepository
 }
 
-func NewRefreshToken() *RefreshToken {
-	return &RefreshToken{
-		RefreshTokenRepository: repository.NewRefreshToken(),
+func NewRefreshTokenService() *RefreshTokenService {
+	return &RefreshTokenService{
+		RefreshTokenRepository: repository.NewRefreshTokenRepository(),
 	}
 }
 
-func (rt *RefreshToken) GenerateTokens(ctx context.Context, userId primitive.ObjectID) (*dto.Token, error) {
+type ResponseTokenDTO struct {
+	AccessToken  string
+	RefreshToken string
+}
+
+func (rt *RefreshTokenService) GenerateTokens(ctx context.Context, userId primitive.ObjectID) (*ResponseTokenDTO, error) {
 	if err := rt.RefreshTokenRepository.DeleteRefreshToken(ctx, userId); err != nil {
 		return nil, fmt.Errorf("failed to delete refresh token, error: %w", err)
 	}
@@ -64,13 +68,13 @@ func (rt *RefreshToken) GenerateTokens(ctx context.Context, userId primitive.Obj
 		CreatedAt: timeNow,
 	})
 
-	return &dto.Token{
+	return &ResponseTokenDTO{
 		AccessToken:  accessTokenString,
 		RefreshToken: refreshTokenString,
 	}, nil
 }
 
-func (rt *RefreshToken) CheckRefreshToken(ctx context.Context, token string) (bool, error) {
+func (rt *RefreshTokenService) CheckRefreshToken(ctx context.Context, token string) (bool, error) {
 	count, err := rt.RefreshTokenRepository.CountRefreshToken(ctx, token)
 	if err != nil {
 		return false, fmt.Errorf("failed to count refresh token, error: %w", err)
@@ -83,7 +87,7 @@ func (rt *RefreshToken) CheckRefreshToken(ctx context.Context, token string) (bo
 	return true, nil
 }
 
-func (rt *RefreshToken) Logout(ctx context.Context, userId primitive.ObjectID) error {
+func (rt *RefreshTokenService) Logout(ctx context.Context, userId primitive.ObjectID) error {
 	if err := rt.RefreshTokenRepository.DeleteRefreshToken(ctx, userId); err != nil {
 		return fmt.Errorf("failed to delete refresh token, error: %w", err)
 	}

@@ -12,13 +12,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type RefreshToken struct{}
+type RefreshTokenRepository struct{}
 
-func NewRefreshToken() *RefreshToken {
-	return &RefreshToken{}
+func NewRefreshTokenRepository() *RefreshTokenRepository {
+	return &RefreshTokenRepository{}
 }
 
-func (rt *RefreshToken) CreateRefreshToken(ctx context.Context, modelRefreshToken model.RefreshToken) error {
+func (rt *RefreshTokenRepository) CreateRefreshToken(ctx context.Context, modelRefreshToken model.RefreshToken) error {
 	if _, err := connection.DB.Collection(config.Cfg.MongoDB.Table.RefreshToken).InsertOne(
 		ctx,
 		modelRefreshToken,
@@ -29,7 +29,7 @@ func (rt *RefreshToken) CreateRefreshToken(ctx context.Context, modelRefreshToke
 	return nil
 }
 
-func (rt *RefreshToken) DeleteRefreshToken(ctx context.Context, userId primitive.ObjectID) error {
+func (rt *RefreshTokenRepository) DeleteRefreshToken(ctx context.Context, userId primitive.ObjectID) error {
 	if _, err := connection.DB.Collection(config.Cfg.MongoDB.Table.RefreshToken).DeleteOne(
 		ctx,
 		bson.M{"userId": userId},
@@ -43,7 +43,7 @@ func (rt *RefreshToken) DeleteRefreshToken(ctx context.Context, userId primitive
 	return nil
 }
 
-func (rt *RefreshToken) CountRefreshToken(ctx context.Context, token string) (int64, error) {
+func (rt *RefreshTokenRepository) CountRefreshToken(ctx context.Context, token string) (int64, error) {
 	count, err := connection.DB.Collection(config.Cfg.MongoDB.Table.RefreshToken).CountDocuments(
 		ctx,
 		bson.M{

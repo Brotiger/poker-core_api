@@ -7,6 +7,7 @@ import (
 	"github.com/Brotiger/per-painted_poker-backend/app/config"
 	"github.com/Brotiger/per-painted_poker-backend/app/module/game/request"
 	"github.com/Brotiger/per-painted_poker-backend/app/module/game/response"
+	"github.com/Brotiger/per-painted_poker-backend/app/module/game/service"
 	sharedResponse "github.com/Brotiger/per-painted_poker-backend/app/shared/response"
 	"github.com/Brotiger/per-painted_poker-backend/app/validator"
 	"github.com/gofiber/fiber/v2"
@@ -26,7 +27,7 @@ import (
 // @securityDefinitions.apikey Authorization
 // @in header
 // @Security Authorization
-func (a *Game) Create(c *fiber.Ctx) error {
+func (gh *GameHandler) Create(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
 	defer cancelCtx()
 
@@ -50,7 +51,11 @@ func (a *Game) Create(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	modelGame, err := a.GameService.CreateGame(ctx, userId, requetCreate)
+	modelGame, err := gh.GameService.CreateGame(ctx, userId, service.RequestCreateGameDTO{
+		Name:       requetCreate.Name,
+		Password:   requetCreate.Password,
+		MaxPlayers: requetCreate.MaxPlayers,
+	})
 	if err != nil {
 		log.Errorf("failed to create game, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)

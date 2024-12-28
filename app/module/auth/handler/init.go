@@ -5,16 +5,16 @@ import (
 	sharedService "github.com/Brotiger/per-painted_poker-backend/app/shared/service"
 )
 
-type Auth struct {
-	AuthService         *service.Auth
-	RefreshTokenService *service.RefreshToken
-	SharedTokenService  *sharedService.Token
+type AuthHandler struct {
+	AuthService         *service.AuthService
+	RefreshTokenService *service.RefreshTokenService
+	SharedTokenService  *sharedService.TokenService
 }
 
-func NewAuth() *Auth {
-	return &Auth{
-		AuthService:         service.NewAuth(),
-		RefreshTokenService: service.NewRefreshToken(),
-		SharedTokenService:  sharedService.NewToken(),
+func NewAuthHandler() *AuthHandler {
+	return &AuthHandler{
+		AuthService:         service.NewAuthService(),
+		RefreshTokenService: service.NewRefreshTokenService(),
+		SharedTokenService:  sharedService.NewTokenService(),
 	}
 }

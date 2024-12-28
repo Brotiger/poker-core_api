@@ -20,7 +20,7 @@ import (
 // @securityDefinitions.apikey Authorization
 // @in header
 // @Security Authorization
-func (a *Game) Start(c *fiber.Ctx) error {
+func (gh *GameHandler) Start(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
 	defer cancelCtx()
 
@@ -30,7 +30,7 @@ func (a *Game) Start(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	if err := a.GameService.StartGame(ctx, userId); err != nil {
+	if err := gh.GameService.StartGame(ctx, userId); err != nil {
 		log.Errorf("faile to start game, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}

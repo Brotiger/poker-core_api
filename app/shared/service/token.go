@@ -11,13 +11,13 @@ import (
 
 var ErrInvalidToken = errors.New("invalid token")
 
-type Token struct{}
+type TokenService struct{}
 
-func NewToken() *Token {
-	return &Token{}
+func NewTokenService() *TokenService {
+	return &TokenService{}
 }
 
-func (t *Token) VerifyToken(tokenString string) (*model.TokenClaims, error) {
+func (ts *TokenService) VerifyToken(tokenString string) (*model.TokenClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &model.TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(config.Cfg.App.Jwt.Secret), nil
 	})

@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (g *Game) AlreadyHasGame(c *fiber.Ctx) error {
+func (gm *GameMiddleware) AlreadyHasGame(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
 	defer cancelCtx()
 
@@ -20,7 +20,7 @@ func (g *Game) AlreadyHasGame(c *fiber.Ctx) error {
 		log.Errorf("failed to convert userId to ObjectID, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
-	exits, err := g.ServiceGame.UserHasGame(ctx, userId)
+	exits, err := gm.gameService.UserHasGame(ctx, userId)
 	if err != nil {
 		log.Errorf("failed to check user has game, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)

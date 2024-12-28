@@ -29,7 +29,7 @@ func main() {
 
 	connection.DB = mongodbClient.Database(config.Cfg.MongoDB.Database)
 
-	userService := service.NewUser()
+	userService := service.NewUserService()
 	if err := userService.CreateUser(ctx); err != nil {
 		log.Fatalf("failed to create user, error: %v", err)
 	}

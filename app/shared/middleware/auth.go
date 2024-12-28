@@ -10,15 +10,15 @@ import (
 
 const headerPrefix = "Bearer"
 
-func (a *Auth) Token(c *fiber.Ctx) error {
-	token, err := getTokenFromHeader(c)
+func (am *AuthMiddleware) Token(c *fiber.Ctx) error {
+	token, err := am.getTokenFromHeader(c)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(response.Error400{
 			Message: "Неверный формат токена.",
 		})
 	}
 
-	tokenClaims, err := a.ServiceToken.VerifyToken(token)
+	tokenClaims, err := am.tokenService.VerifyToken(token)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(response.Error401{
 			Message: "Невалидный токен.",
@@ -30,7 +30,7 @@ func (a *Auth) Token(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func getTokenFromHeader(c *fiber.Ctx) (string, error) {
+func (am *AuthMiddleware) getTokenFromHeader(c *fiber.Ctx) (string, error) {
 	header := c.Get("Authorization")
 	l := len(headerPrefix)
 	if len(header) < l+2 || header[:l] != headerPrefix {

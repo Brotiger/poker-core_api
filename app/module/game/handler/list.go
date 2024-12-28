@@ -7,6 +7,7 @@ import (
 	"github.com/Brotiger/per-painted_poker-backend/app/config"
 	"github.com/Brotiger/per-painted_poker-backend/app/module/game/request"
 	"github.com/Brotiger/per-painted_poker-backend/app/module/game/response"
+	"github.com/Brotiger/per-painted_poker-backend/app/module/game/service"
 	sharedResponse "github.com/Brotiger/per-painted_poker-backend/app/shared/response"
 	"github.com/Brotiger/per-painted_poker-backend/app/validator"
 	"github.com/gofiber/fiber/v2"
@@ -25,7 +26,7 @@ import (
 // @securityDefinitions.apikey Authorization
 // @in header
 // @Security Authorization
-func (a *Game) List(c *fiber.Ctx) error {
+func (gh *GameHandler) List(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
 	defer cancelCtx()
 
@@ -46,22 +47,26 @@ func (a *Game) List(c *fiber.Ctx) error {
 		})
 	}
 
-	modelGames, total, err := a.GameService.GetGameList(ctx, requetList)
+	responseGetGameListDTO, total, err := gh.GameService.GetGameList(ctx, service.RequestGetGameListDTO{
+		Name: requetList.Name,
+		Size: requetList.Size,
+		From: requetList.From,
+	})
 	if err != nil {
 		log.Errorf("failed to get game list, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
 	responseGames := []response.Game{}
-	for _, modelGame := range modelGames {
+	for _, game := range responseGetGameListDTO {
 		responseGames = append(responseGames, response.Game{
-			Id:           modelGame.Id,
-			Status:       modelGame.Status,
-			OwnerId:      modelGame.OwnerId,
-			Name:         modelGame.Name,
-			CountPlayers: len(modelGame.Users),
-			MaxPlayers:   modelGame.MaxPlayers,
-			WithPassword: modelGame.Password != nil,
+			Id:           game.Id,
+			Status:       game.Status,
+			OwnerId:      game.OwnerId,
+			Name:         game.Name,
+			CountPlayers: game.CountPlayers,
+			MaxPlayers:   game.MaxPlayers,
+			WithPassword: game.WithPassword,
 		})
 	}
 

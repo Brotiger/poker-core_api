@@ -9,13 +9,13 @@ import (
 	"github.com/Brotiger/per-painted_poker-backend/seeder/model"
 )
 
-type User struct{}
+type UserRepository struct{}
 
-func NewUser() *User {
-	return &User{}
+func NewUserRepository() *UserRepository {
+	return &UserRepository{}
 }
 
-func (u *User) CreateUser(ctx context.Context, modelUser model.User) error {
+func (ur *UserRepository) CreateUser(ctx context.Context, modelUser model.User) error {
 	if _, err := connection.DB.Collection(config.Cfg.MongoDB.Table.User).InsertOne(ctx, modelUser); err != nil {
 		return fmt.Errorf("failed to insert one, error: %w", err)
 	}

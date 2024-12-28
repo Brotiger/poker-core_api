@@ -5,14 +5,14 @@ import (
 	sharedService "github.com/Brotiger/per-painted_poker-backend/app/shared/service"
 )
 
-type Game struct {
-	SharedTokenService *sharedService.Token
-	GameService        *service.Game
+type GameHandler struct {
+	SharedTokenService *sharedService.TokenService
+	GameService        *service.GameService
 }
 
-func NewGame() *Game {
-	return &Game{
-		SharedTokenService: sharedService.NewToken(),
-		GameService:        service.NewGame(),
+func NewGame() *GameHandler {
+	return &GameHandler{
+		SharedTokenService: sharedService.NewTokenService(),
+		GameService:        service.NewGameService(),
 	}
 }

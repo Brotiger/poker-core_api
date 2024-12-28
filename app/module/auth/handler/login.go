@@ -9,6 +9,7 @@ import (
 	cError "github.com/Brotiger/per-painted_poker-backend/app/module/auth/error"
 	"github.com/Brotiger/per-painted_poker-backend/app/module/auth/request"
 	"github.com/Brotiger/per-painted_poker-backend/app/module/auth/response"
+	"github.com/Brotiger/per-painted_poker-backend/app/module/auth/service"
 	sharedResponse "github.com/Brotiger/per-painted_poker-backend/app/shared/response"
 	"github.com/Brotiger/per-painted_poker-backend/app/validator"
 	"github.com/gofiber/fiber/v2"
@@ -27,25 +28,28 @@ import (
 // @securityDefinitions.apikey Authorization
 // @in header
 // @Security Authorization
-func (a *Auth) Login(c *fiber.Ctx) error {
+func (a *AuthHandler) Login(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
 	defer cancelCtx()
 
-	var requetLogin request.Login
-	if err := c.BodyParser(&requetLogin); err != nil {
+	var requestLogin request.Login
+	if err := c.BodyParser(&requestLogin); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
 			Message: "Не валидный запрос.",
 		})
 	}
 
-	if err := validator.Validator.Struct(requetLogin); err != nil {
+	if err := validator.Validator.Struct(requestLogin); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
 			Message: "Ошибка валидации.",
 			Errors:  validator.ValidateErr(err),
 		})
 	}
 
-	modelUser, err := a.AuthService.GetUser(ctx, requetLogin)
+	modelUser, err := a.AuthService.GetUser(ctx, service.RequestGetUserDTO{
+		Email:    requestLogin.Email,
+		Password: requestLogin.Password,
+	})
 	if err != nil {
 		if errors.Is(err, cError.ErrUserNotFound) || errors.Is(err, cError.ErrCompareHashAndPassword) {
 			return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Error401{

@@ -11,17 +11,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type User struct {
-	UserRepository *repository.User
+type UserService struct {
+	UserRepository *repository.UserRepository
 }
 
-func NewUser() *User {
-	return &User{
-		UserRepository: repository.NewUser(),
+func NewUserService() *UserService {
+	return &UserService{
+		UserRepository: repository.NewUserRepository(),
 	}
 }
 
-func (u *User) CreateUser(ctx context.Context) error {
+func (us *UserService) CreateUser(ctx context.Context) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(config.Cfg.MongoDB.ConnectTimeoutMs)*time.Millisecond)
 	defer cancel()
 
@@ -32,14 +32,16 @@ func (u *User) CreateUser(ctx context.Context) error {
 
 	timeNow := time.Now()
 	modelUser := model.User{
-		Username:  config.Cfg.App.Root.Username,
-		Email:     config.Cfg.App.Root.Email,
-		Password:  string(hashedPassword),
-		UpdatedAt: timeNow,
-		CreatedAt: timeNow,
+		Username:         config.Cfg.App.Root.Username,
+		Email:            config.Cfg.App.Root.Email,
+		Password:         string(hashedPassword),
+		EmailConfirmed:   true,
+		EmailConfirmedAt: &timeNow,
+		UpdatedAt:        timeNow,
+		CreatedAt:        timeNow,
 	}
 
-	if err := u.UserRepository.CreateUser(ctx, modelUser); err != nil {
+	if err := us.UserRepository.CreateUser(ctx, modelUser); err != nil {
 		return fmt.Errorf("failed to create user, error: %w", err)
 	}
 

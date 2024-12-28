@@ -2,12 +2,12 @@ package middleware
 
 import "github.com/Brotiger/per-painted_poker-backend/app/module/game/service"
 
-type Game struct {
-	ServiceGame *service.Game
+type GameMiddleware struct {
+	gameService *service.GameService
 }
 
-func NewGame() *Game {
-	return &Game{
-		ServiceGame: service.NewGame(),
+func NewGameMiddleware() *GameMiddleware {
+	return &GameMiddleware{
+		gameService: service.NewGameService(),
 	}
 }
