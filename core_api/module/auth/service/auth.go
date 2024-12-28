@@ -64,10 +64,9 @@ func (as *AuthService) Register(ctx context.Context, requetRegisterDTO RequestRe
 
 	timeNow := time.Now()
 	modelUser := model.User{
-		Username: requetRegisterDTO.Username,
-		Email:    requetRegisterDTO.Email,
-		Password: string(hashedPassword),
-
+		Username:  requetRegisterDTO.Username,
+		Email:     requetRegisterDTO.Email,
+		Password:  string(hashedPassword),
 		UpdatedAt: timeNow,
 		CreatedAt: timeNow,
 	}
@@ -77,4 +76,30 @@ func (as *AuthService) Register(ctx context.Context, requetRegisterDTO RequestRe
 	}
 
 	return nil
+}
+
+func (as *AuthService) CheckUsername(ctx context.Context, username string) (bool, error) {
+	count, err := as.UserRepository.CountUsersByUsername(ctx, username)
+	if err != nil {
+		return false, fmt.Errorf("failed to count users, error: %w", err)
+	}
+
+	if count > 0 {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func (as *AuthService) CheckEmail(ctx context.Context, email string) (bool, error) {
+	count, err := as.UserRepository.CountUsersByEmail(ctx, email)
+	if err != nil {
+		return false, fmt.Errorf("failed to count users, error: %w", err)
+	}
+
+	if count > 0 {
+		return false, nil
+	}
+
+	return true, nil
 }

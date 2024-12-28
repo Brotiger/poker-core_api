@@ -27,3 +27,15 @@ db.user.createIndex(
         "background": true
     }
 )
+
+db.refresh_token.createIndex(
+    {
+        "createdAt": 1
+    },
+    {
+        "partialFilterExpression": {
+            "emailConfirmed": false
+        },
+        "expireAfterSeconds": 900
+    }
+)

@@ -10,7 +10,8 @@ import (
 	sharedResponse "github.com/Brotiger/per-painted_poker-backend/core_api/shared/response"
 	"github.com/Brotiger/per-painted_poker-backend/core_api/validator"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
+	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func (ah *AuthHandler) Register(c *fiber.Ctx) error {
@@ -28,6 +29,34 @@ func (ah *AuthHandler) Register(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
 			Message: "Ошибка валидации.",
 			Errors:  validator.ValidateErr(err),
+		})
+	}
+
+	ok, err := ah.AuthService.CheckUsername(ctx, requetRegister.Username)
+	if err != nil {
+		log.Errorf("failed to check username, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
+	}
+	if !ok {
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+			Message: "Ошибка валидации.",
+			Errors: bson.M{
+				"username": "Пользователь с таким именем уже существует.",
+			},
+		})
+	}
+
+	ok, err = ah.AuthService.CheckEmail(ctx, requetRegister.Email)
+	if err != nil {
+		log.Errorf("failed to check email, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
+	}
+	if !ok {
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+			Message: "Ошибка валидации.",
+			Errors: bson.M{
+				"email": "Пользователь с такой почтой уже существует.",
+			},
 		})
 	}
 

@@ -48,3 +48,37 @@ func (ur *UserRepository) CreateUser(ctx context.Context, modelUser model.User) 
 
 	return nil
 }
+
+func (ur *UserRepository) CountUsersByUsername(ctx context.Context, username string) (int64, error) {
+	count, err := connection.DB.Collection(config.Cfg.MongoDB.Table.User).CountDocuments(
+		ctx,
+		bson.M{
+			"username": username,
+		},
+		options.Count().SetHint(bson.D{
+			{Key: "username", Value: 1},
+		}),
+	)
+	if err != nil {
+		return 0, fmt.Errorf("failed to count documents, error: %w", err)
+	}
+
+	return count, nil
+}
+
+func (ur *UserRepository) CountUsersByEmail(ctx context.Context, email string) (int64, error) {
+	count, err := connection.DB.Collection(config.Cfg.MongoDB.Table.User).CountDocuments(
+		ctx,
+		bson.M{
+			"email": email,
+		},
+		options.Count().SetHint(bson.D{
+			{Key: "email", Value: 1},
+		}),
+	)
+	if err != nil {
+		return 0, fmt.Errorf("failed to count documents, error: %w", err)
+	}
+
+	return count, nil
+}
