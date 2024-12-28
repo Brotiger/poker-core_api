@@ -1,15 +1,15 @@
 SHELL := /bin/bash
 
 build:
-	go build -o app ./cmd/app/main.go
+	go build -o app ./cmd/core_api/main.go
 .PHONY: build
 
 up:
-	./app
+	./core_api
 .PHONY: up
 
 run:
-	go run ./cmd/app
+	go run ./cmd/core_api
 .PHONY: run
 
 seed:
@@ -22,5 +22,5 @@ dev:
 .PHONY: dev
 
 docs:
-	swag init -d ./cmd/app,./app,./app/module -o ./docs/swagger --parseDependency --parseInternal
+	swag init -d ./cmd/core_api,./core_api/core_api/module -o ./docs/swagger --parseDependency --parseInternal
 .PHONY: docs
