@@ -1,0 +1,21 @@
+services:
+  mongodb:
+    build:
+      context: .
+      dockerfile: ./mongodb/Dockerfile
+    ports:
+      - 27017:27017
+    restart: always
+    container_name: pocker-mongodb
+
+  nats:
+    build:
+      context: .
+      dockerfile: ./nats/Dockerfile
+    command: ["--js"]
+    ports:
+      - "4222:4222"
+      - "6222:6222"
+      - "8080:8080"
+    restart: always
+    container_name: pocker-nats
