@@ -103,8 +103,7 @@ func (as *AuthService) Register(ctx context.Context, requestRegisterDTO RequestR
 	}
 
 	data, err := json.Marshal(natsModel.Register{
-		Email: requestRegisterDTO.Email,
-		Code:  modelCode.Code,
+		Code: modelCode.Code,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal mailer msg, error: %w", err)
@@ -113,7 +112,8 @@ func (as *AuthService) Register(ctx context.Context, requestRegisterDTO RequestR
 	if _, err := connection.JS.PublishMsg(ctx, &nats.Msg{
 		Subject: config.Cfg.Nats.Streams.Mailer,
 		Header: nats.Header{
-			"type": []string{"register"},
+			"type":  []string{"register"},
+			"email": []string{requestRegisterDTO.Email},
 		},
 		Data: data,
 	}); err != nil {
