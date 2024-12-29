@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Brotiger/per-painted_poker-backend/seeder/config"
-	"github.com/Brotiger/per-painted_poker-backend/seeder/model"
-	"github.com/Brotiger/per-painted_poker-backend/seeder/repository"
+	"github.com/Brotiger/poker-core_api/seeder/config"
+	"github.com/Brotiger/poker-core_api/seeder/model"
+	"github.com/Brotiger/poker-core_api/seeder/repository"
 	"golang.org/x/crypto/bcrypt"
 )
 

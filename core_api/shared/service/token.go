@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Brotiger/per-painted_poker-backend/core_api/config"
-	"github.com/Brotiger/per-painted_poker-backend/core_api/shared/model"
+	"github.com/Brotiger/poker-core_api/core_api/config"
+	"github.com/Brotiger/poker-core_api/core_api/shared/model"
 	"github.com/golang-jwt/jwt"
 )
 

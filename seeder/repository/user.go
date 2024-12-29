@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Brotiger/per-painted_poker-backend/seeder/config"
-	"github.com/Brotiger/per-painted_poker-backend/seeder/connection"
-	"github.com/Brotiger/per-painted_poker-backend/seeder/model"
+	"github.com/Brotiger/poker-core_api/seeder/config"
+	"github.com/Brotiger/poker-core_api/seeder/connection"
+	"github.com/Brotiger/poker-core_api/seeder/model"
 )
 
 type UserRepository struct{}

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/Brotiger/per-painted_poker-backend/core_api/shared/response"
+	"github.com/Brotiger/poker-core_api/core_api/shared/response"
 	"github.com/gofiber/fiber/v2"
 )
 

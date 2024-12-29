@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Brotiger/per-painted_poker-backend/core_api/config"
-	"github.com/Brotiger/per-painted_poker-backend/core_api/connection"
-	"github.com/Brotiger/per-painted_poker-backend/core_api/module/auth/model"
+	"github.com/Brotiger/poker-core_api/core_api/config"
+	"github.com/Brotiger/poker-core_api/core_api/connection"
+	"github.com/Brotiger/poker-core_api/core_api/module/auth/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"

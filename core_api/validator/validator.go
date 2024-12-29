@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	validatorError "github.com/Brotiger/per-painted_poker-backend/core_api/validator/error"
+	validatorError "github.com/Brotiger/poker-core_api/core_api/validator/error"
 	"github.com/go-playground/validator/v10"
 )
 

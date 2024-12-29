@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/Brotiger/per-painted_poker-backend/core_api/config"
+	"github.com/Brotiger/poker-core_api/core_api/config"
 	"github.com/gofiber/fiber/v2"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"

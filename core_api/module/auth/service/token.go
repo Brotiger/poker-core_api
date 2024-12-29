@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Brotiger/per-painted_poker-backend/core_api/config"
-	"github.com/Brotiger/per-painted_poker-backend/core_api/module/auth/model"
-	"github.com/Brotiger/per-painted_poker-backend/core_api/module/auth/repository"
+	"github.com/Brotiger/poker-core_api/core_api/config"
+	"github.com/Brotiger/poker-core_api/core_api/module/auth/model"
+	"github.com/Brotiger/poker-core_api/core_api/module/auth/repository"
 	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
-	sharedModel "github.com/Brotiger/per-painted_poker-backend/core_api/shared/model"
+	sharedModel "github.com/Brotiger/poker-core_api/core_api/shared/model"
 )
 
 type RefreshTokenService struct {

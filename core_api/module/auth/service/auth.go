@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	cError "github.com/Brotiger/per-painted_poker-backend/core_api/module/auth/error"
-	"github.com/Brotiger/per-painted_poker-backend/core_api/module/auth/model"
-	"github.com/Brotiger/per-painted_poker-backend/core_api/module/auth/repository"
+	cError "github.com/Brotiger/poker-core_api/core_api/module/auth/error"
+	"github.com/Brotiger/poker-core_api/core_api/module/auth/model"
+	"github.com/Brotiger/poker-core_api/core_api/module/auth/repository"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )

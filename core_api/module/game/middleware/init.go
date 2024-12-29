@@ -1,6 +1,6 @@
 package middleware
 
-import "github.com/Brotiger/per-painted_poker-backend/core_api/module/game/service"
+import "github.com/Brotiger/poker-core_api/core_api/module/game/service"
 
 type GameMiddleware struct {
 	gameService *service.GameService

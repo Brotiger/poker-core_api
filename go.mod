@@ -1,4 +1,4 @@
-module github.com/Brotiger/per-painted_poker-backend
+module github.com/Brotiger/poker-core_api
 
 go 1.22.0
 

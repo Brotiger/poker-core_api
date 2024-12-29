@@ -38,3 +38,4 @@ make seed # генерация данных
 
 ## Ссылки
 * [Клиентское приложение](https://github.com/Brotiger/poker-app)
+* [Сервис отправки писем](https://github.com/Brotiger/poker-mailer)

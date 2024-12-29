@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"github.com/Brotiger/per-painted_poker-backend/core_api/module/auth/service"
-	sharedService "github.com/Brotiger/per-painted_poker-backend/core_api/shared/service"
+	"github.com/Brotiger/poker-core_api/core_api/module/auth/service"
+	sharedService "github.com/Brotiger/poker-core_api/core_api/shared/service"
 )
 
 type AuthHandler struct {
