@@ -18,5 +18,9 @@ dev:
 .PHONY: dev
 
 docs:
-	swag init -d ./cmd,./internal/module -o ./docs/swagger --parseDependency --parseInternal
+	swag init -d ./cmd/core_api,./core_api/module -o ./docs/swagger --parseDependency --parseInternal
 .PHONY: docs
+
+nats-streams-add:
+	nats -s "${CORE_API_NATS_ADDR}" str add "${CORE_API_NATS_STREAMS_MAILER}" --subjects "mailer" --ack --retention=work --max-age=1h --defaults;
+.PHONY: nats-streams-add

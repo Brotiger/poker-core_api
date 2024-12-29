@@ -6,6 +6,7 @@ import (
 
 	"github.com/Brotiger/poker-core_api/core_api/config"
 	"github.com/Brotiger/poker-core_api/core_api/module/auth/request"
+	"github.com/Brotiger/poker-core_api/core_api/module/auth/response"
 	"github.com/Brotiger/poker-core_api/core_api/module/auth/service"
 	sharedResponse "github.com/Brotiger/poker-core_api/core_api/shared/response"
 	"github.com/Brotiger/poker-core_api/core_api/validator"
@@ -14,6 +15,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+// @Summary Регистрация
+// @Tags Auth
+// @Router /auth/register [post]
+// @Produce json
+// @Param request body request.Register false "Body params"
+// @Success 200 {object} response.Register "Успешный ответ."
+// @Failure 400 {object} sharedResponse.Error400 "Не валидный запрос."
+// @Failure 500 "Ошибка сервера."
 func (ah *AuthHandler) Register(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
 	defer cancelCtx()
@@ -60,14 +69,17 @@ func (ah *AuthHandler) Register(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := ah.AuthService.Register(ctx, service.RequestRegisterDTO{
+	responseRegisterDTO, err := ah.AuthService.Register(ctx, service.RequestRegisterDTO{
 		Email:    requetRegister.Email,
 		Username: requetRegister.Username,
 		Password: requetRegister.Password,
-	}); err != nil {
+	})
+	if err != nil {
 		log.Errorf("failed to register, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	return nil
+	return c.Status(fiber.StatusOK).JSON(response.Register{
+		Id: responseRegisterDTO.Id,
+	})
 }

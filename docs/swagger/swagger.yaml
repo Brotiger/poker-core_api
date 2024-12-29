@@ -1,6 +1,6 @@
 basePath: /api
 definitions:
-  github_com_Brotiger_per-painted_poker-backend_core_api_module_auth_request.Login:
+  github_com_Brotiger_poker-core_api_core_api_module_auth_request.Login:
     properties:
       email:
         example: example@example.com
@@ -12,13 +12,35 @@ definitions:
     - email
     - password
     type: object
-  github_com_Brotiger_per-painted_poker-backend_core_api_module_auth_request.Refresh:
+  github_com_Brotiger_poker-core_api_core_api_module_auth_request.Refresh:
     properties:
       refresh_token:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuYXV0aDAuY29tLyIsImF1ZCI6Imh0dHBzOi8vYXBpLmV4YW1wbGUuY29tL2NhbGFuZGFyL3YxLyIsInN1YiI6InVzcl8xMjMiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.CA7eaHjIHz5NxeIJoFK9krqaeZrPLwmMmgI_XiQiIkQ
         type: string
     type: object
-  github_com_Brotiger_per-painted_poker-backend_core_api_module_auth_response.Token:
+  github_com_Brotiger_poker-core_api_core_api_module_auth_request.Register:
+    properties:
+      email:
+        example: example@example.com
+        type: string
+      password:
+        example: example
+        type: string
+      username:
+        example: example
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  github_com_Brotiger_poker-core_api_core_api_module_auth_response.Register:
+    properties:
+      id:
+        example: 507f191e810c19729de860ea
+        type: string
+    type: object
+  github_com_Brotiger_poker-core_api_core_api_module_auth_response.Token:
     properties:
       access_token:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuYXV0aDAuY29tLyIsImF1ZCI6Imh0dHBzOi8vYXBpLmV4YW1wbGUuY29tL2NhbGFuZGFyL3YxLyIsInN1YiI6InVzcl8xMjMiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.CA7eaHjIHz5NxeIJoFK9krqaeZrPLwmMmgI_XiQiIkQ
@@ -27,7 +49,7 @@ definitions:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuYXV0aDAuY29tLyIsImF1ZCI6Imh0dHBzOi8vYXBpLmV4YW1wbGUuY29tL2NhbGFuZGFyL3YxLyIsInN1YiI6InVzcl8xMjMiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.CA7eaHjIHz5NxeIJoFK9krqaeZrPLwmMmgI_XiQiIkQ
         type: string
     type: object
-  github_com_Brotiger_per-painted_poker-backend_core_api_module_game_request.Create:
+  github_com_Brotiger_poker-core_api_core_api_module_game_request.Create:
     properties:
       max_players:
         example: 5
@@ -44,7 +66,7 @@ definitions:
     - max_players
     - name
     type: object
-  github_com_Brotiger_per-painted_poker-backend_core_api_module_game_response.Create:
+  github_com_Brotiger_poker-core_api_core_api_module_game_response.Create:
     properties:
       _id:
         example: 507f1f77bcf86cd799439011
@@ -71,7 +93,7 @@ definitions:
           type: string
         type: array
     type: object
-  github_com_Brotiger_per-painted_poker-backend_core_api_module_game_response.Game:
+  github_com_Brotiger_poker-core_api_core_api_module_game_response.Game:
     properties:
       count_players:
         example: 3
@@ -95,11 +117,11 @@ definitions:
         example: true
         type: boolean
     type: object
-  github_com_Brotiger_per-painted_poker-backend_core_api_module_game_response.List:
+  github_com_Brotiger_poker-core_api_core_api_module_game_response.List:
     properties:
       games:
         items:
-          $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_game_response.Game'
+          $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.Game'
         type: array
       total:
         example: 100
@@ -127,14 +149,14 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_auth_request.Login'
+          $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_request.Login'
       produces:
       - application/json
       responses:
         "200":
           description: Успешный ответ.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_auth_response.Token'
+            $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_response.Token'
         "400":
           description: Не валидный запрос.
           schema:
@@ -171,14 +193,14 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_auth_request.Refresh'
+          $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_request.Refresh'
       produces:
       - application/json
       responses:
         "200":
           description: Успешный ответ.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_auth_response.Token'
+            $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_response.Token'
         "400":
           description: Не валидный запрос.
           schema:
@@ -190,6 +212,30 @@ paths:
         "500":
           description: Ошибка сервера.
       summary: Обновление токена
+      tags:
+      - Auth
+  /auth/register:
+    post:
+      parameters:
+      - description: Body params
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_request.Register'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ.
+          schema:
+            $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_response.Register'
+        "400":
+          description: Не валидный запрос.
+          schema:
+            $ref: '#/definitions/response.Error400'
+        "500":
+          description: Ошибка сервера.
+      summary: Регистрация
       tags:
       - Auth
   /game:
@@ -216,7 +262,7 @@ paths:
         "200":
           description: Успешный ответ.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_game_response.List'
+            $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.List'
         "400":
           description: Не валидный запрос.
           schema:
@@ -238,14 +284,14 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_game_request.Create'
+          $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_request.Create'
       produces:
       - application/json
       responses:
         "200":
           description: Успешный ответ.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_game_response.Create'
+            $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.Create'
         "400":
           description: Не валидный запрос.
           schema:

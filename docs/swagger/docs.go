@@ -35,7 +35,7 @@ const docTemplate = `{
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_auth_request.Login"
+                            "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_request.Login"
                         }
                     }
                 ],
@@ -43,7 +43,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Успешный ответ.",
                         "schema": {
-                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_auth_response.Token"
+                            "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_response.Token"
                         }
                     },
                     "400": {
@@ -103,7 +103,7 @@ const docTemplate = `{
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_auth_request.Refresh"
+                            "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_request.Refresh"
                         }
                     }
                 ],
@@ -111,7 +111,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Успешный ответ.",
                         "schema": {
-                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_auth_response.Token"
+                            "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_response.Token"
                         }
                     },
                     "400": {
@@ -124,6 +124,44 @@ const docTemplate = `{
                         "description": "Неверный или просроченный токен обновления.",
                         "schema": {
                             "$ref": "#/definitions/response.Error401"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера."
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Регистрация",
+                "parameters": [
+                    {
+                        "description": "Body params",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_request.Register"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ.",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_response.Register"
+                        }
+                    },
+                    "400": {
+                        "description": "Не валидный запрос.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error400"
                         }
                     },
                     "500": {
@@ -173,7 +211,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Успешный ответ.",
                         "schema": {
-                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_game_response.List"
+                            "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.List"
                         }
                     },
                     "400": {
@@ -212,7 +250,7 @@ const docTemplate = `{
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_game_request.Create"
+                            "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_request.Create"
                         }
                     }
                 ],
@@ -220,7 +258,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Успешный ответ.",
                         "schema": {
-                            "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_game_response.Create"
+                            "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.Create"
                         }
                     },
                     "400": {
@@ -270,7 +308,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "github_com_Brotiger_per-painted_poker-backend_core_api_module_auth_request.Login": {
+        "github_com_Brotiger_poker-core_api_core_api_module_auth_request.Login": {
             "type": "object",
             "required": [
                 "email",
@@ -287,7 +325,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_Brotiger_per-painted_poker-backend_core_api_module_auth_request.Refresh": {
+        "github_com_Brotiger_poker-core_api_core_api_module_auth_request.Refresh": {
             "type": "object",
             "properties": {
                 "refresh_token": {
@@ -296,7 +334,38 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_Brotiger_per-painted_poker-backend_core_api_module_auth_response.Token": {
+        "github_com_Brotiger_poker-core_api_core_api_module_auth_request.Register": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "example@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "example"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "example"
+                }
+            }
+        },
+        "github_com_Brotiger_poker-core_api_core_api_module_auth_response.Register": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "507f191e810c19729de860ea"
+                }
+            }
+        },
+        "github_com_Brotiger_poker-core_api_core_api_module_auth_response.Token": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -309,7 +378,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_Brotiger_per-painted_poker-backend_core_api_module_game_request.Create": {
+        "github_com_Brotiger_poker-core_api_core_api_module_game_request.Create": {
             "type": "object",
             "required": [
                 "max_players",
@@ -332,7 +401,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_Brotiger_per-painted_poker-backend_core_api_module_game_response.Create": {
+        "github_com_Brotiger_poker-core_api_core_api_module_game_response.Create": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -370,7 +439,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_Brotiger_per-painted_poker-backend_core_api_module_game_response.Game": {
+        "github_com_Brotiger_poker-core_api_core_api_module_game_response.Game": {
             "type": "object",
             "properties": {
                 "count_players": {
@@ -403,13 +472,13 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_Brotiger_per-painted_poker-backend_core_api_module_game_response.List": {
+        "github_com_Brotiger_poker-core_api_core_api_module_game_response.List": {
             "type": "object",
             "properties": {
                 "games": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_Brotiger_per-painted_poker-backend_core_api_module_game_response.Game"
+                        "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.Game"
                     }
                 },
                 "total": {

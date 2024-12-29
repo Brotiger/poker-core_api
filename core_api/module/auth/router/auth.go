@@ -14,4 +14,5 @@ func SetupRouter(api fiber.Router) {
 	auth.Post("/login", authHandler.Login)
 	auth.Post("/refresh", authHandler.Refresh)
 	auth.Post("/logout", authMiddleware.Token, authHandler.Logout)
+	auth.Post("/register", authHandler.Register)
 }

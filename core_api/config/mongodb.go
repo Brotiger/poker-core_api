@@ -11,5 +11,6 @@ type MongoDB struct {
 		User         string `env:"CORE_API_MONGODB_TABLE_USER" envDefault:"user"`
 		RefreshToken string `env:"CORE_API_MONGODB_TABLE_REFRESH_TOKEN" envDefault:"refresh_token"`
 		Game         string `env:"CORE_API_MONGODB_TABLE_GAME" envDefault:"game"`
+		Code         string `env:"CORE_API_MONGODB_TABLE_CODE" envDefault:"code"`
 	}
 }

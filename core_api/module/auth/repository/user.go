@@ -9,6 +9,7 @@ import (
 	cError "github.com/Brotiger/poker-core_api/core_api/module/auth/error"
 	"github.com/Brotiger/poker-core_api/core_api/module/auth/model"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -41,12 +42,14 @@ func (ur *UserRepository) FindUserByEmail(ctx context.Context, email string) (*m
 	return &modelUser, nil
 }
 
-func (ur *UserRepository) CreateUser(ctx context.Context, modelUser model.User) error {
-	if _, err := connection.DB.Collection(config.Cfg.MongoDB.Table.User).InsertOne(ctx, modelUser); err != nil {
-		return fmt.Errorf("failed to insert one, error: %w", err)
+func (ur *UserRepository) CreateUser(ctx context.Context, modelUser model.User) (*primitive.ObjectID, error) {
+	result, err := connection.DB.Collection(config.Cfg.MongoDB.Table.User).InsertOne(ctx, modelUser)
+	if err != nil {
+		return nil, fmt.Errorf("failed to insert one, error: %w", err)
 	}
 
-	return nil
+	insertId := result.InsertedID.(primitive.ObjectID)
+	return &insertId, nil
 }
 
 func (ur *UserRepository) CountUsersByUsername(ctx context.Context, username string) (int64, error) {

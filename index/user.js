@@ -30,12 +30,12 @@ db.user.createIndex(
 
 db.refresh_token.createIndex(
     {
-        "createdAt": 1
+        "updatedAt": 1
     },
     {
         "partialFilterExpression": {
             "emailConfirmed": false
         },
-        "expireAfterSeconds": 900
+        "expireAfterSeconds": 600
     }
 )
