@@ -1,4 +1,6 @@
 # Расписной покер (Core API)
+Основное API игры
+
 ## Зависомости
 * go1.22
 * make
@@ -9,6 +11,12 @@
         * collection - _структура коллекций_
             * users.js
 
+## Запуск инфраструктуры
+~~~bash
+cd ./docker
+docker compose up
+~~~
+
 ## Сборка и запуск
 ### Конфигурация
 _Прописать в `.env` параметры и экспортировать:_
@@ -17,21 +25,15 @@ cp .env.example .env
 source .env
 ```
 
-## Запуск инфраструктуры
-~~~bash
-cd ./docker
-docker compose up
-~~~
-
 ### Make команды
 ```bash
 make build # сборка проекта
 make up # запуск скомпилированного проекта
 make run # запуск без компиляции
 
-make seed
 make dev # установка dev зависимостей
 make docs # генерация swagger документации
+make seed # генерация данных
 ```
 
 ## Ссылки

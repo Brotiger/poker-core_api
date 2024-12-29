@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 build:
-	go build -o app ./cmd/core_api/main.go
+	go build -o core_api ./cmd/main.go
 .PHONY: build
 
 up:
@@ -9,12 +9,8 @@ up:
 .PHONY: up
 
 run:
-	go run ./cmd/core_api
+	go run ./cmd
 .PHONY: run
-
-seed:
-	go run ./cmd/seeder
-.PHONY: seed
 
 dev:
 	go install github.com/cespare/reflex@latest
@@ -22,5 +18,5 @@ dev:
 .PHONY: dev
 
 docs:
-	swag init -d ./cmd/core_api,./core_api/module -o ./docs/swagger --parseDependency --parseInternal
+	swag init -d ./cmd,./internal/module -o ./docs/swagger --parseDependency --parseInternal
 .PHONY: docs
