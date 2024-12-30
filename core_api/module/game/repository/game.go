@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/Brotiger/poker-core_api/core_api/config"
 	"github.com/Brotiger/poker-core_api/core_api/connection"
@@ -132,7 +133,8 @@ func (gr *GameRepository) UpdateGameStatus(ctx context.Context, userId primitive
 		bson.M{"ownerId": userId},
 		bson.M{
 			"$set": bson.M{
-				"status": status,
+				"status":    status,
+				"updatedAt": time.Now(),
 			},
 		},
 		options.Update().SetHint(bson.D{

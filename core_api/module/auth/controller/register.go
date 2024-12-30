@@ -6,7 +6,6 @@ import (
 
 	"github.com/Brotiger/poker-core_api/core_api/config"
 	"github.com/Brotiger/poker-core_api/core_api/module/auth/request"
-	"github.com/Brotiger/poker-core_api/core_api/module/auth/response"
 	"github.com/Brotiger/poker-core_api/core_api/module/auth/service"
 	sharedResponse "github.com/Brotiger/poker-core_api/core_api/shared/response"
 	"github.com/Brotiger/poker-core_api/core_api/validator"
@@ -27,21 +26,21 @@ func (ah *AuthController) Register(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
 	defer cancelCtx()
 
-	var requetRegister request.Register
-	if err := c.BodyParser(&requetRegister); err != nil {
+	var requestRegister request.Register
+	if err := c.BodyParser(&requestRegister); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
 			Message: "Не валидный запрос.",
 		})
 	}
 
-	if err := validator.Validator.Struct(requetRegister); err != nil {
+	if err := validator.Validator.Struct(requestRegister); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
 			Message: "Ошибка валидации.",
 			Errors:  validator.ValidateErr(err),
 		})
 	}
 
-	ok, err := ah.AuthService.CheckUsername(ctx, requetRegister.Username)
+	ok, err := ah.AuthService.CheckUsername(ctx, requestRegister.Username)
 	if err != nil {
 		log.Errorf("failed to check username, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)
@@ -55,7 +54,7 @@ func (ah *AuthController) Register(c *fiber.Ctx) error {
 		})
 	}
 
-	ok, err = ah.AuthService.CheckEmail(ctx, requetRegister.Email)
+	ok, err = ah.AuthService.CheckEmail(ctx, requestRegister.Email)
 	if err != nil {
 		log.Errorf("failed to check email, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)
@@ -69,17 +68,14 @@ func (ah *AuthController) Register(c *fiber.Ctx) error {
 		})
 	}
 
-	responseRegisterDTO, err := ah.AuthService.Register(ctx, service.RequestRegisterDTO{
-		Email:    requetRegister.Email,
-		Username: requetRegister.Username,
-		Password: requetRegister.Password,
-	})
-	if err != nil {
+	if err := ah.AuthService.Register(ctx, service.RequestRegisterDTO{
+		Email:    requestRegister.Email,
+		Username: requestRegister.Username,
+		Password: requestRegister.Password,
+	}); err != nil {
 		log.Errorf("failed to register, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	return c.Status(fiber.StatusOK).JSON(response.Register{
-		Id: responseRegisterDTO.Id,
-	})
+	return nil
 }

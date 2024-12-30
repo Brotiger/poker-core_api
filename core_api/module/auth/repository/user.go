@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/Brotiger/poker-core_api/core_api/config"
 	"github.com/Brotiger/poker-core_api/core_api/connection"
@@ -95,6 +96,26 @@ func (ur *UserRepository) UpdateConfirmedEmailById(ctx context.Context, id primi
 		bson.M{
 			"$set": bson.M{
 				"emailConfirmed": true,
+				"updatedAt":      time.Now(),
+			},
+		},
+	); err != nil {
+		return fmt.Errorf("failed to update one, error: %w", err)
+	}
+
+	return nil
+}
+
+func (ur *UserRepository) UpdatePasswordByUserId(ctx context.Context, id primitive.ObjectID, password string) error {
+	if _, err := connection.DB.Collection(config.Cfg.MongoDB.Table.User).UpdateOne(
+		ctx,
+		bson.M{
+			"_id": id,
+		},
+		bson.M{
+			"$set": bson.M{
+				"password":  password,
+				"updatedAt": time.Now(),
 			},
 		},
 	); err != nil {

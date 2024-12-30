@@ -66,14 +66,10 @@ type RequestRegisterDTO struct {
 	Password string
 }
 
-type ResponseRegisterDTO struct {
-	Id primitive.ObjectID
-}
-
-func (as *AuthService) Register(ctx context.Context, requestRegisterDTO RequestRegisterDTO) (*ResponseRegisterDTO, error) {
+func (as *AuthService) Register(ctx context.Context, requestRegisterDTO RequestRegisterDTO) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(requestRegisterDTO.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, fmt.Errorf("failed to hash password: %w", err)
+		return fmt.Errorf("failed to hash password: %w", err)
 	}
 
 	timeNow := time.Now()
@@ -87,11 +83,12 @@ func (as *AuthService) Register(ctx context.Context, requestRegisterDTO RequestR
 
 	userId, err := as.userRepository.CreateUser(ctx, modelUser)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create user, error: %w", err)
+		return fmt.Errorf("failed to create user, error: %w", err)
 	}
 
 	codeType := "register"
 	modelCode := model.Code{
+		UserId:    *userId,
 		Code:      as.randomService.RandomString(config.Cfg.App.CodeLength),
 		Type:      codeType,
 		UpdatedAt: timeNow,
@@ -99,30 +96,28 @@ func (as *AuthService) Register(ctx context.Context, requestRegisterDTO RequestR
 	}
 
 	if err := as.codeRepository.CreateCode(ctx, modelCode); err != nil {
-		return nil, fmt.Errorf("failed to create code, error: %w", err)
+		return fmt.Errorf("failed to create code, error: %w", err)
 	}
 
 	data, err := json.Marshal(natsModel.Register{
 		Code: modelCode.Code,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to marshal mailer msg, error: %w", err)
+		return fmt.Errorf("failed to marshal mailer msg, error: %w", err)
 	}
 
 	if _, err := connection.JS.PublishMsg(ctx, &nats.Msg{
 		Subject: config.Cfg.Nats.Streams.Mailer,
 		Header: nats.Header{
-			"type":  []string{"register"},
+			"type":  []string{codeType},
 			"email": []string{requestRegisterDTO.Email},
 		},
 		Data: data,
 	}); err != nil {
-		return nil, fmt.Errorf("failed to publish nats msg, error: %w", err)
+		return fmt.Errorf("failed to publish nats msg, error: %w", err)
 	}
 
-	return &ResponseRegisterDTO{
-		Id: *userId,
-	}, nil
+	return nil
 }
 
 func (as *AuthService) CheckUsername(ctx context.Context, username string) (bool, error) {
@@ -152,12 +147,17 @@ func (as *AuthService) CheckEmail(ctx context.Context, email string) (bool, erro
 }
 
 type RequestConfirmedEmailDTO struct {
-	UserId primitive.ObjectID
-	Code   string
+	Email string
+	Code  string
 }
 
 func (as *AuthService) ConfirmEmail(ctx context.Context, requestConfirmedEmailDTO RequestConfirmedEmailDTO) error {
-	modelCode, err := as.codeRepository.FindCodeByUserId(ctx, requestConfirmedEmailDTO.UserId)
+	modelUser, err := as.userRepository.FindUserByEmail(ctx, requestConfirmedEmailDTO.Email)
+	if err != nil {
+		return fmt.Errorf("failed to find user by email, error: %w", err)
+	}
+
+	modelCode, err := as.codeRepository.FindCodeByUserId(ctx, *modelUser.Id)
 	if err != nil {
 		return fmt.Errorf("failed to find code, error: %w", err)
 	}
@@ -170,7 +170,85 @@ func (as *AuthService) ConfirmEmail(ctx context.Context, requestConfirmedEmailDT
 		return fmt.Errorf("failed to delete code by id, error: %w", err)
 	}
 
-	if err := as.userRepository.UpdateConfirmedEmailById(ctx, requestConfirmedEmailDTO.UserId); err != nil {
+	if err := as.userRepository.UpdateConfirmedEmailById(ctx, *modelUser.Id); err != nil {
+		return fmt.Errorf("failed to update user by id, error: %w", err)
+	}
+
+	return nil
+}
+
+func (as *AuthService) Restore(ctx context.Context, email string) error {
+	modelUser, err := as.userRepository.FindUserByEmail(ctx, email)
+	if err != nil {
+		return fmt.Errorf("failed to find user, error: %w", err)
+	}
+
+	timeNow := time.Now()
+	codeType := "restore"
+	modelCode := model.Code{
+		UserId:    *modelUser.Id,
+		Code:      as.randomService.RandomString(config.Cfg.App.CodeLength),
+		Type:      codeType,
+		UpdatedAt: timeNow,
+		CreatedAt: timeNow,
+	}
+
+	if err := as.codeRepository.CreateCode(ctx, modelCode); err != nil {
+		return fmt.Errorf("failed to create code, error: %w", err)
+	}
+
+	data, err := json.Marshal(natsModel.Restore{
+		Code: modelCode.Code,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to marshal mailer msg, error: %w", err)
+	}
+
+	if _, err := connection.JS.PublishMsg(ctx, &nats.Msg{
+		Subject: config.Cfg.Nats.Streams.Mailer,
+		Header: nats.Header{
+			"type":  []string{codeType},
+			"email": []string{email},
+		},
+		Data: data,
+	}); err != nil {
+		return fmt.Errorf("failed to publish nats msg, error: %w", err)
+	}
+
+	return nil
+}
+
+type RequestConfirmedRestoreDTO struct {
+	Email    string
+	Password string
+	Code     string
+}
+
+func (as *AuthService) ConfirmRestore(ctx context.Context, requestConfirmedRestoreDTO RequestConfirmedRestoreDTO) error {
+	modelUser, err := as.userRepository.FindUserByEmail(ctx, requestConfirmedRestoreDTO.Email)
+	if err != nil {
+		return fmt.Errorf("failed to find user by email, error: %w", err)
+	}
+
+	modelCode, err := as.codeRepository.FindCodeByUserId(ctx, *modelUser.Id)
+	if err != nil {
+		return fmt.Errorf("failed to find code, error: %w", err)
+	}
+
+	if modelCode.Code != requestConfirmedRestoreDTO.Code {
+		return cError.ErrCompareCode
+	}
+
+	if err := as.codeRepository.DeleteById(ctx, *modelCode.Id); err != nil {
+		return fmt.Errorf("failed to delete code by id, error: %w", err)
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(requestConfirmedRestoreDTO.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("failed to hash password: %w", err)
+	}
+
+	if err := as.userRepository.UpdatePasswordByUserId(ctx, *modelUser.Id, string(hashedPassword)); err != nil {
 		return fmt.Errorf("failed to update user by id, error: %w", err)
 	}
 
