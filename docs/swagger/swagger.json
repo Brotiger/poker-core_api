@@ -6,6 +6,41 @@
     },
     "basePath": "/api",
     "paths": {
+        "/auth/confirm_email": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Подтверждение почты",
+                "parameters": [
+                    {
+                        "description": "Body params",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_request.ConfirmedEmail"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ."
+                    },
+                    "400": {
+                        "description": "Не валидный запрос.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error400"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера."
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "security": [
@@ -299,6 +334,17 @@
         }
     },
     "definitions": {
+        "github_com_Brotiger_poker-core_api_core_api_module_auth_request.ConfirmedEmail": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_Brotiger_poker-core_api_core_api_module_auth_request.Login": {
             "type": "object",
             "required": [
@@ -339,10 +385,12 @@
                 },
                 "password": {
                     "type": "string",
+                    "minLength": 10,
                     "example": "example"
                 },
                 "username": {
                     "type": "string",
+                    "minLength": 2,
                     "example": "example"
                 }
             }

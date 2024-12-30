@@ -85,3 +85,21 @@ func (ur *UserRepository) CountUsersByEmail(ctx context.Context, email string) (
 
 	return count, nil
 }
+
+func (ur *UserRepository) UpdateConfirmedEmailById(ctx context.Context, id primitive.ObjectID) error {
+	if _, err := connection.DB.Collection(config.Cfg.MongoDB.Table.User).UpdateOne(
+		ctx,
+		bson.M{
+			"_id": id,
+		},
+		bson.M{
+			"$set": bson.M{
+				"emailConfirmed": true,
+			},
+		},
+	); err != nil {
+		return fmt.Errorf("failed to update one, error: %w", err)
+	}
+
+	return nil
+}

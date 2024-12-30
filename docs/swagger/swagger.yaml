@@ -1,5 +1,12 @@
 basePath: /api
 definitions:
+  github_com_Brotiger_poker-core_api_core_api_module_auth_request.ConfirmedEmail:
+    properties:
+      code:
+        type: string
+      user_id:
+        type: string
+    type: object
   github_com_Brotiger_poker-core_api_core_api_module_auth_request.Login:
     properties:
       email:
@@ -25,9 +32,11 @@ definitions:
         type: string
       password:
         example: example
+        minLength: 10
         type: string
       username:
         example: example
+        minLength: 2
         type: string
     required:
     - email
@@ -142,6 +151,28 @@ info:
   contact: {}
   title: Core API
 paths:
+  /auth/confirm_email:
+    post:
+      parameters:
+      - description: Body params
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_request.ConfirmedEmail'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ.
+        "400":
+          description: Не валидный запрос.
+          schema:
+            $ref: '#/definitions/response.Error400'
+        "500":
+          description: Ошибка сервера.
+      summary: Подтверждение почты
+      tags:
+      - Auth
   /auth/login:
     post:
       parameters:

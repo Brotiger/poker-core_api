@@ -150,3 +150,29 @@ func (as *AuthService) CheckEmail(ctx context.Context, email string) (bool, erro
 
 	return true, nil
 }
+
+type RequestConfirmedEmailDTO struct {
+	UserId primitive.ObjectID
+	Code   string
+}
+
+func (as *AuthService) ConfirmEmail(ctx context.Context, requestConfirmedEmailDTO RequestConfirmedEmailDTO) error {
+	modelCode, err := as.codeRepository.FindCodeByUserId(ctx, requestConfirmedEmailDTO.UserId)
+	if err != nil {
+		return fmt.Errorf("failed to find code, error: %w", err)
+	}
+
+	if modelCode.Code != requestConfirmedEmailDTO.Code {
+		return cError.ErrCompareCode
+	}
+
+	if err := as.codeRepository.DeleteById(ctx, *modelCode.Id); err != nil {
+		return fmt.Errorf("failed to delete code by id, error: %w", err)
+	}
+
+	if err := as.userRepository.UpdateConfirmedEmailById(ctx, requestConfirmedEmailDTO.UserId); err != nil {
+		return fmt.Errorf("failed to update user by id, error: %w", err)
+	}
+
+	return nil
+}

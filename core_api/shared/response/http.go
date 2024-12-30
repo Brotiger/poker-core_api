@@ -8,3 +8,7 @@ type Error400 struct {
 type Error401 struct {
 	Message string `json:"message"`
 }
+
+type Error404 struct {
+	Message string `json:"message"`
+}
