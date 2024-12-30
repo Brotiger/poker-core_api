@@ -3,6 +3,6 @@ db.code.createIndex(
         "updatedAt": 1
     },
     {
-        "expireAfterSeconds": 600
+        "expireAfterSeconds": 900
     }
 )

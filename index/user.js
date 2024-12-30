@@ -36,6 +36,6 @@ db.user.createIndex(
         "partialFilterExpression": {
             "emailConfirmed": false
         },
-        "expireAfterSeconds": 600
+        "expireAfterSeconds": 900
     }
 )

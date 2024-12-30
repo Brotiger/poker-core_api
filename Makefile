@@ -22,5 +22,5 @@ docs:
 .PHONY: docs
 
 nats-streams-add:
-	nats -s "${CORE_API_NATS_ADDR}" str add "${CORE_API_NATS_STREAMS_MAILER}" --subjects "mailer" --ack --retention=work --max-age=1h --defaults;
+	nats -s "${CORE_API_NATS_ADDR}" str add "${CORE_API_NATS_STREAMS_MAILER}" --subjects "mailer" --ack --retention=work --max-age=15m --defaults;
 .PHONY: nats-streams-add
