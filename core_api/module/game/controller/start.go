@@ -1,4 +1,4 @@
-package handler
+package controller
 
 import (
 	"context"
@@ -20,7 +20,7 @@ import (
 // @securityDefinitions.apikey Authorization
 // @in header
 // @Security Authorization
-func (gh *GameHandler) Start(c *fiber.Ctx) error {
+func (gh *GameController) Start(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
 	defer cancelCtx()
 

@@ -1,4 +1,4 @@
-package handler
+package controller
 
 import (
 	"context"
@@ -24,7 +24,7 @@ import (
 // @Failure 400 {object} sharedResponse.Error400 "Не валидный запрос."
 // @Failure 401 {object} sharedResponse.Error401 "Неверный или просроченный токен обновления."
 // @Failure 500 "Ошибка сервера."
-func (a *AuthHandler) Refresh(c *fiber.Ctx) error {
+func (a *AuthController) Refresh(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
 	defer cancelCtx()
 

@@ -1,4 +1,4 @@
-package handler
+package controller
 
 import (
 	"context"
@@ -23,7 +23,7 @@ import (
 // @Success 200 {object} response.Register "Успешный ответ."
 // @Failure 400 {object} sharedResponse.Error400 "Не валидный запрос."
 // @Failure 500 "Ошибка сервера."
-func (ah *AuthHandler) Register(c *fiber.Ctx) error {
+func (ah *AuthController) Register(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
 	defer cancelCtx()
 
