@@ -56,7 +56,7 @@ func (as *AuthService) GetUser(ctx context.Context, requestGetUserDTO RequestGet
 	}
 
 	return &ResponseGetUserDTO{
-		Id: modelUser.Id,
+		Id: *modelUser.Id,
 	}, nil
 }
 

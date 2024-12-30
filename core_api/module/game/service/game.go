@@ -50,7 +50,7 @@ func (gs *GameService) GetGameList(ctx context.Context, requestGetGameListDTO Re
 	var responseGetGameListDTO []ResponseGetGameListDTO
 	for _, modelGame := range modelGames {
 		responseGetGameListDTO = append(responseGetGameListDTO, ResponseGetGameListDTO{
-			Id:           modelGame.Id,
+			Id:           *modelGame.Id,
 			Status:       modelGame.Status,
 			OwnerId:      modelGame.OwnerId,
 			Name:         modelGame.Name,

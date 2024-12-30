@@ -7,7 +7,7 @@ import (
 )
 
 type Game struct {
-	Id         primitive.ObjectID   `bson:"_id"`
+	Id         *primitive.ObjectID  `bson:"_id,omitempty"`
 	Status     string               `bson:"status"`
 	Name       string               `bson:"name"`
 	Password   *string              `bson:"password,omitempty"`

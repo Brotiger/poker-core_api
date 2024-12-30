@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 build:
-	go build -o core_api ./cmd/main.go
+	go build -o core_api ./cmd/core_api/main.go
 .PHONY: build
 
 up:
@@ -9,7 +9,7 @@ up:
 .PHONY: up
 
 run:
-	go run ./cmd
+	go run ./cmd/core_api
 .PHONY: run
 
 dev:

@@ -78,10 +78,14 @@ func main() {
 	}
 
 	natsConn, err := nats.Connect(config.Cfg.Nats.Addr, options...)
-	log.Fatalf("failed to connect to nats, error: %v", err)
+	if err != nil {
+		log.Fatalf("failed to connect to nats, error: %v", err)
+	}
 
 	connection.JS, err = jetstream.New(natsConn)
-	log.Fatalf("failed to connect to jet stream, error: %v", err)
+	if err != nil {
+		log.Fatalf("failed to connect to jet stream, error: %v", err)
+	}
 
 	router.SetupRouter(app)
 

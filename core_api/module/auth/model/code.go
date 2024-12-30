@@ -7,9 +7,9 @@ import (
 )
 
 type Code struct {
-	Id        primitive.ObjectID `bson:"_id"`
-	Code      string             `bson:"code"`
-	Type      string             `bson:"type"`
-	UpdatedAt time.Time          `bson:"updatedAt"`
-	CreatedAt time.Time          `bson:"createdAt"`
+	Id        *primitive.ObjectID `bson:"_id,omitempty"`
+	Code      string              `bson:"code"`
+	Type      string              `bson:"type"`
+	UpdatedAt time.Time           `bson:"updatedAt"`
+	CreatedAt time.Time           `bson:"createdAt"`
 }

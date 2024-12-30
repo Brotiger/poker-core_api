@@ -28,7 +28,7 @@ db.user.createIndex(
     }
 )
 
-db.refresh_token.createIndex(
+db.user.createIndex(
     {
         "updatedAt": 1
     },
