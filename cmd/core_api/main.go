@@ -2,6 +2,10 @@ package main
 
 import (
 	"context"
+	"errors"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/Brotiger/poker-core_api/core_api/config"
@@ -89,10 +93,38 @@ func main() {
 
 	router.SetupRouter(app)
 
+	shutdown := make(chan os.Signal, 1)
+	defer close(shutdown)
+	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
+
+	serverShutdown := make(chan struct{})
+	defer close(serverShutdown)
+
+	go func() {
+		<-shutdown
+		defer func() {
+			serverShutdown <- struct{}{}
+		}()
+
+		log.Info("graceful shutdown: started")
+		if err = app.ShutdownWithTimeout(time.Duration(config.Cfg.App.GracefulShutdownTimeoutMS) * time.Millisecond); err != nil {
+			if errors.Is(err, context.DeadlineExceeded) {
+				log.Warn("graceful shutdown: timeout, forcing shutdown")
+				return
+			} else {
+				log.Errorf("graceful shutdown: failed to graceful shutdown, error %v", err)
+				return
+			}
+		}
+		log.Info("graceful shutdown: finished")
+	}()
+
 	log.Info("application started")
 	log.Infof("local API docs: http://%s", swagger.SwaggerInfo.Host+"/swagger/index.html")
 
 	if err := app.Listen(config.Cfg.Fiber.Listen); err != nil {
 		log.Errorf("failed to listen, error: %v", err)
 	}
+
+	<-serverShutdown
 }
