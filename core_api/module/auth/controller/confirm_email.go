@@ -30,13 +30,13 @@ func (ah *AuthController) ConfirmEmail(c *fiber.Ctx) error {
 
 	var requestConfirmedEmail request.ConfirmedEmail
 	if err := c.BodyParser(&requestConfirmedEmail); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
 			Message: "Не валидный запрос.",
 		})
 	}
 
 	if err := validator.Validator.Struct(requestConfirmedEmail); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
 			Message: "Ошибка валидации.",
 			Errors:  validator.ValidateErr(err),
 		})
@@ -50,7 +50,7 @@ func (ah *AuthController) ConfirmEmail(c *fiber.Ctx) error {
 		},
 	); err != nil {
 		if errors.Is(err, cError.ErrCompareCode) || errors.Is(err, cError.ErrCodeNotFound) || errors.Is(err, cError.ErrUserNotFound) {
-			return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+			return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
 				Message: "Ошибка валидации.",
 				Errors: bson.M{
 					"code": "Невалидный код.",
@@ -62,5 +62,7 @@ func (ah *AuthController) ConfirmEmail(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	return nil
+	return c.Status(fiber.StatusOK).JSON(sharedResponse.OK{
+		Message: "Регистрация прошла успешно.",
+	})
 }

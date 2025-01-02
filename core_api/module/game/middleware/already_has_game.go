@@ -27,7 +27,7 @@ func (gm *GameMiddleware) AlreadyHasGame(c *fiber.Ctx) error {
 	}
 
 	if exits {
-		return c.Status(fiber.StatusBadRequest).JSON(response.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(response.BadRequest{
 			Message: "У пользователя уже есть игра.",
 		})
 	}

@@ -13,6 +13,7 @@ import (
 	"github.com/Brotiger/poker-core_api/core_api/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // @Summary Подтверждение кода востановления
@@ -29,13 +30,13 @@ func (ah *AuthController) ConfirmRestore(c *fiber.Ctx) error {
 
 	var requestConfirmedEmail request.ConfirmedRestore
 	if err := c.BodyParser(&requestConfirmedEmail); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
 			Message: "Не валидный запрос.",
 		})
 	}
 
 	if err := validator.Validator.Struct(requestConfirmedEmail); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
 			Message: "Ошибка валидации.",
 			Errors:  validator.ValidateErr(err),
 		})
@@ -50,8 +51,11 @@ func (ah *AuthController) ConfirmRestore(c *fiber.Ctx) error {
 		},
 	); err != nil {
 		if errors.Is(err, cError.ErrCompareCode) || errors.Is(err, cError.ErrCodeNotFound) || errors.Is(err, cError.ErrUserNotFound) {
-			return c.Status(fiber.StatusNotFound).JSON(sharedResponse.Error400{
+			return c.Status(fiber.StatusNotFound).JSON(sharedResponse.BadRequest{
 				Message: "Невалидный код.",
+				Errors: bson.M{
+					"code": "Невалидный код.",
+				},
 			})
 		}
 
@@ -59,5 +63,7 @@ func (ah *AuthController) ConfirmRestore(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	return nil
+	return c.Status(fiber.StatusOK).JSON(sharedResponse.OK{
+		Message: "Пароль успешно изменен.",
+	})
 }

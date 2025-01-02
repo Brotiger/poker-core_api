@@ -28,13 +28,13 @@ func (ah *AuthController) Register(c *fiber.Ctx) error {
 
 	var requestRegister request.Register
 	if err := c.BodyParser(&requestRegister); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
 			Message: "Не валидный запрос.",
 		})
 	}
 
 	if err := validator.Validator.Struct(requestRegister); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
 			Message: "Ошибка валидации.",
 			Errors:  validator.ValidateErr(err),
 		})
@@ -46,7 +46,7 @@ func (ah *AuthController) Register(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 	if !ok {
-		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
 			Message: "Ошибка валидации.",
 			Errors: bson.M{
 				"username": "Пользователь с таким именем уже существует.",
@@ -60,7 +60,7 @@ func (ah *AuthController) Register(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 	if !ok {
-		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
 			Message: "Ошибка валидации.",
 			Errors: bson.M{
 				"email": "Пользователь с такой почтой уже существует.",

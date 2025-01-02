@@ -28,7 +28,7 @@ func (gm *GameMiddleware) GameCannotBeStarted(c *fiber.Ctx) error {
 	}
 
 	if !canBeStarted {
-		return c.Status(fiber.StatusBadRequest).JSON(response.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(response.BadRequest{
 			Message: "Игра не может быть запущена.",
 		})
 	}

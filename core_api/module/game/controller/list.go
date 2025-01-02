@@ -35,13 +35,13 @@ func (gh *GameController) List(c *fiber.Ctx) error {
 	}
 
 	if err := c.QueryParser(&requetList); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
 			Message: "Не валидный запрос.",
 		})
 	}
 
 	if err := validator.Validator.Struct(requetList); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
 			Message: "Ошибка валидации.",
 			Errors:  validator.ValidateErr(err),
 		})

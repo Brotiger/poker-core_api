@@ -13,14 +13,14 @@ const headerPrefix = "Bearer"
 func (am *AuthMiddleware) Token(c *fiber.Ctx) error {
 	token, err := am.getTokenFromHeader(c)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(response.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(response.BadRequest{
 			Message: "Неверный формат токена.",
 		})
 	}
 
 	tokenClaims, err := am.tokenService.VerifyToken(token)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(response.Error401{
+		return c.Status(fiber.StatusUnauthorized).JSON(response.Unauthorized{
 			Message: "Невалидный токен.",
 		})
 	}

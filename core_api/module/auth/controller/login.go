@@ -34,13 +34,13 @@ func (a *AuthController) Login(c *fiber.Ctx) error {
 
 	var requestLogin request.Login
 	if err := c.BodyParser(&requestLogin); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
 			Message: "Не валидный запрос.",
 		})
 	}
 
 	if err := validator.Validator.Struct(requestLogin); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
 			Message: "Ошибка валидации.",
 			Errors:  validator.ValidateErr(err),
 		})
@@ -52,7 +52,7 @@ func (a *AuthController) Login(c *fiber.Ctx) error {
 	})
 	if err != nil {
 		if errors.Is(err, cError.ErrUserNotFound) || errors.Is(err, cError.ErrCompareHashAndPassword) {
-			return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Error401{
+			return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Unauthorized{
 				Message: "Не верное имя пользователя или пароль.",
 			})
 		}
@@ -62,7 +62,7 @@ func (a *AuthController) Login(c *fiber.Ctx) error {
 	}
 
 	if !modelUser.EmailConfirmed {
-		return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Error401{
+		return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Unauthorized{
 			Message: "Пользователь не подтвержден.",
 		})
 	}

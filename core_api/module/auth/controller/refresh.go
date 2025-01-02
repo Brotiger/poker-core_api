@@ -30,13 +30,13 @@ func (a *AuthController) Refresh(c *fiber.Ctx) error {
 
 	var requetRefresh request.Refresh
 	if err := c.BodyParser(&requetRefresh); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
 			Message: "Не валидный запрос.",
 		})
 	}
 
 	if err := validator.Validator.Struct(requetRefresh); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
 			Message: "Ошибка валидации.",
 			Errors:  validator.ValidateErr(err),
 		})
@@ -45,7 +45,7 @@ func (a *AuthController) Refresh(c *fiber.Ctx) error {
 	tokenClaims, err := a.SharedTokenService.VerifyToken(requetRefresh.RefreshToken)
 	if err != nil {
 		if err == sharedService.ErrInvalidToken {
-			return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Error401{
+			return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Unauthorized{
 				Message: "Просроченный токен обновления.",
 			})
 		}
@@ -67,7 +67,7 @@ func (a *AuthController) Refresh(c *fiber.Ctx) error {
 	}
 
 	if !exist {
-		return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Error401{
+		return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Unauthorized{
 			Message: "Невалидный токен обновления.",
 		})
 	}

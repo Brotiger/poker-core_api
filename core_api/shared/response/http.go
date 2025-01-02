@@ -1,14 +1,18 @@
 package response
 
-type Error400 struct {
+type BadRequest struct {
 	Message string `json:"message"`
 	Errors  any    `json:"errors,omitempty"`
 }
 
-type Error401 struct {
+type Unauthorized struct {
 	Message string `json:"message"`
 }
 
-type Error404 struct {
+type NotFound struct {
+	Message string `json:"message"`
+}
+
+type OK struct {
 	Message string `json:"message"`
 }
