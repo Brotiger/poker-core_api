@@ -54,7 +54,7 @@ func (gs *GameService) GetGameList(ctx context.Context, requestGetGameListDTO Re
 			Status:       modelGame.Status,
 			OwnerId:      modelGame.OwnerId,
 			Name:         modelGame.Name,
-			CountPlayers: len(modelGame.SocketIds),
+			CountPlayers: len(modelGame.Users),
 			MaxPlayers:   modelGame.MaxPlayers,
 			WithPassword: modelGame.Password != nil,
 		})
@@ -94,6 +94,7 @@ func (gs *GameService) CreateGame(ctx context.Context, requestCreateGameDTO Requ
 		Password:   requestCreateGameDTO.Password,
 		MaxPlayers: requestCreateGameDTO.MaxPlayers,
 		OwnerId:    requestCreateGameDTO.UserId,
+		Users:      []primitive.ObjectID{requestCreateGameDTO.UserId},
 		UpdatedAt:  timeNow,
 		CreatedAt:  timeNow,
 	}
@@ -148,7 +149,7 @@ func (gs *GameService) GameCanBeStarted(ctx context.Context, userId primitive.Ob
 		return false, nil
 	}
 
-	if modelGame.MaxPlayers != len(modelGame.SocketIds) {
+	if modelGame.MaxPlayers != len(modelGame.Users) {
 		return false, nil
 	}
 

@@ -10,6 +10,6 @@ type Create struct {
 	Name       string               `json:"name" example:"test"`
 	Password   *string              `json:"password,omitempty" example:"123456"`
 	OwnerId    primitive.ObjectID   `json:"owner_id" example:"507f1f77bcf86cd799439011"`
-	SocketIds  []primitive.ObjectID `json:"socket_ids" example:"507f1f77bcf86cd799439011"`
+	Users      []primitive.ObjectID `json:"users" example:"507f1f77bcf86cd799439011"`
 	MaxPlayers int                  `json:"max_players" example:"5"`
 }

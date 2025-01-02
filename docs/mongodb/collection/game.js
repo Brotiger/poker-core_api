@@ -4,7 +4,7 @@ game = {
 	"name": "string",
 	"password": "string",
 	"ownerId": "ObjectId",
-	"socketIds": [
+	"users": [
         "ObjectId",
     ],
 	"maxPlayers": "int",
