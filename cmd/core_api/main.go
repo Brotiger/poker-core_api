@@ -12,7 +12,7 @@ import (
 	"github.com/Brotiger/poker-core_api/core_api/connection"
 	"github.com/Brotiger/poker-core_api/core_api/router"
 	"github.com/Brotiger/poker-core_api/docs/swagger"
-	"github.com/Brotiger/poker-core_api/pkg/mongodb"
+	mongodb "github.com/Brotiger/poker-core_api/pkg/mongodb/connection"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"

@@ -83,7 +83,7 @@ type ResponseCreateGameDTO struct {
 	Name       string
 	Password   *string
 	MaxPlayers int
-	OwnerId    primitive.ObjectID
+	Users      []primitive.ObjectID
 }
 
 func (gs *GameService) CreateGame(ctx context.Context, requestCreateGameDTO RequestCreateGameDTO) (*ResponseCreateGameDTO, error) {
@@ -110,7 +110,7 @@ func (gs *GameService) CreateGame(ctx context.Context, requestCreateGameDTO Requ
 		Name:       requestCreateGameDTO.Name,
 		Password:   requestCreateGameDTO.Password,
 		MaxPlayers: requestCreateGameDTO.MaxPlayers,
-		OwnerId:    modelGame.OwnerId,
+		Users:      modelGame.Users,
 	}, nil
 }
 

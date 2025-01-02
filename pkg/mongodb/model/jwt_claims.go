@@ -2,7 +2,7 @@ package model
 
 import "github.com/golang-jwt/jwt"
 
-type TokenClaims struct {
+type JWTClaims struct {
 	UserId string `json:"userId"`
 	jwt.StandardClaims
 }

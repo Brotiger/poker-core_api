@@ -57,9 +57,9 @@ func (gh *GameController) List(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	responseGames := []response.Game{}
+	responseGames := []response.ListGame{}
 	for _, game := range responseGetGameListDTO {
-		responseGames = append(responseGames, response.Game{
+		responseGames = append(responseGames, response.ListGame{
 			Id:           game.Id,
 			Status:       game.Status,
 			OwnerId:      game.OwnerId,

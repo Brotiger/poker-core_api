@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/Brotiger/poker-core_api/pkg/mongodb"
+	mongodb "github.com/Brotiger/poker-core_api/pkg/mongodb/connection"
 	"github.com/Brotiger/poker-core_api/seeder/config"
 	"github.com/Brotiger/poker-core_api/seeder/connection"
 	"github.com/Brotiger/poker-core_api/seeder/service"

@@ -8,11 +8,13 @@ import (
 type GameController struct {
 	SharedTokenService *sharedService.TokenService
 	GameService        *service.GameService
+	TokenService       *service.TokenService
 }
 
 func NewGameController() *GameController {
 	return &GameController{
 		SharedTokenService: sharedService.NewTokenService(),
 		GameService:        service.NewGameService(),
+		TokenService:       service.NewTokenService(),
 	}
 }

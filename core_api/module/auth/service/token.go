@@ -11,7 +11,7 @@ import (
 	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
-	sharedModel "github.com/Brotiger/poker-core_api/core_api/shared/model"
+	pkgModel "github.com/Brotiger/poker-core_api/pkg/mongodb/model"
 )
 
 type RefreshTokenService struct {
@@ -34,7 +34,7 @@ func (rt *RefreshTokenService) GenerateTokens(ctx context.Context, userId primit
 		return nil, fmt.Errorf("failed to delete refresh token, error: %w", err)
 	}
 
-	accessTokenClaims := sharedModel.TokenClaims{
+	accessTokenClaims := pkgModel.JWTClaims{
 		UserId: userId.Hex(),
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Duration(config.Cfg.App.Jwt.AccessTokenExpireAt) * time.Minute).Unix(),
@@ -47,7 +47,7 @@ func (rt *RefreshTokenService) GenerateTokens(ctx context.Context, userId primit
 		return nil, fmt.Errorf("failed to signed string, error: %w", err)
 	}
 
-	refreshTokenClaims := sharedModel.TokenClaims{
+	refreshTokenClaims := pkgModel.JWTClaims{
 		UserId: userId.Hex(),
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Duration(config.Cfg.App.Jwt.RefreshTokenExpireAt) * time.Minute).Unix(),
