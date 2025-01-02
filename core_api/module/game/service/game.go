@@ -54,7 +54,7 @@ func (gs *GameService) GetGameList(ctx context.Context, requestGetGameListDTO Re
 			Status:       modelGame.Status,
 			OwnerId:      modelGame.OwnerId,
 			Name:         modelGame.Name,
-			CountPlayers: len(modelGame.Users),
+			CountPlayers: len(modelGame.SocketIds),
 			MaxPlayers:   modelGame.MaxPlayers,
 			WithPassword: modelGame.Password != nil,
 		})
@@ -71,6 +71,7 @@ func (gs *GameService) GetGameList(ctx context.Context, requestGetGameListDTO Re
 }
 
 type RequestCreateGameDTO struct {
+	UserId     primitive.ObjectID
 	Name       string
 	MaxPlayers int
 	Password   *string
@@ -83,18 +84,16 @@ type ResponseCreateGameDTO struct {
 	Password   *string
 	MaxPlayers int
 	OwnerId    primitive.ObjectID
-	Users      []primitive.ObjectID
 }
 
-func (gs *GameService) CreateGame(ctx context.Context, userId primitive.ObjectID, requestCreateGameDTO RequestCreateGameDTO) (*ResponseCreateGameDTO, error) {
+func (gs *GameService) CreateGame(ctx context.Context, requestCreateGameDTO RequestCreateGameDTO) (*ResponseCreateGameDTO, error) {
 	timeNow := time.Now()
 	modelGame := model.Game{
 		Status:     "waiting",
 		Name:       requestCreateGameDTO.Name,
 		Password:   requestCreateGameDTO.Password,
 		MaxPlayers: requestCreateGameDTO.MaxPlayers,
-		OwnerId:    userId,
-		Users:      []primitive.ObjectID{userId},
+		OwnerId:    requestCreateGameDTO.UserId,
 		UpdatedAt:  timeNow,
 		CreatedAt:  timeNow,
 	}
@@ -110,8 +109,7 @@ func (gs *GameService) CreateGame(ctx context.Context, userId primitive.ObjectID
 		Name:       requestCreateGameDTO.Name,
 		Password:   requestCreateGameDTO.Password,
 		MaxPlayers: requestCreateGameDTO.MaxPlayers,
-		OwnerId:    userId,
-		Users:      []primitive.ObjectID{userId},
+		OwnerId:    modelGame.OwnerId,
 	}, nil
 }
 
@@ -150,7 +148,7 @@ func (gs *GameService) GameCanBeStarted(ctx context.Context, userId primitive.Ob
 		return false, nil
 	}
 
-	if modelGame.MaxPlayers != len(modelGame.Users) {
+	if modelGame.MaxPlayers != len(modelGame.SocketIds) {
 		return false, nil
 	}
 

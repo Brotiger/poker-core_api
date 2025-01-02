@@ -9,7 +9,11 @@
 * docs
     * mongodb
         * collection - _структура коллекций_
-            * users.js
+            * code.js
+            * game.js
+            * refresh_token.js
+            * socket.js
+            * user.js
 
 ## Запуск инфраструктуры
 ~~~bash
@@ -39,3 +43,4 @@ make seed # генерация данных
 ## Ссылки
 * [Клиентское приложение](https://github.com/Brotiger/poker-app)
 * [Сервис отправки писем](https://github.com/Brotiger/poker-mailer)
+* [WebSocket сервис](https://github.com/Brotiger/poker-websocket)

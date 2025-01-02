@@ -12,7 +12,7 @@ type Game struct {
 	Name       string               `bson:"name"`
 	Password   *string              `bson:"password,omitempty"`
 	OwnerId    primitive.ObjectID   `bson:"ownerId"`
-	Users      []primitive.ObjectID `bson:"users"`
+	SocketIds  []primitive.ObjectID `bson:"socketIds"`
 	MaxPlayers int                  `bson:"maxPlayers"`
 	UpdatedAt  time.Time            `bson:"updatedAt"`
 	CreatedAt  time.Time            `bson:"createdAt"`

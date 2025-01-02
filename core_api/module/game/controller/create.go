@@ -51,7 +51,8 @@ func (gh *GameController) Create(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	modelGame, err := gh.GameService.CreateGame(ctx, userId, service.RequestCreateGameDTO{
+	modelGame, err := gh.GameService.CreateGame(ctx, service.RequestCreateGameDTO{
+		UserId:     userId,
 		Name:       requetCreate.Name,
 		Password:   requetCreate.Password,
 		MaxPlayers: requetCreate.MaxPlayers,
@@ -67,7 +68,6 @@ func (gh *GameController) Create(c *fiber.Ctx) error {
 		Name:       modelGame.Name,
 		Password:   modelGame.Password,
 		OwnerId:    modelGame.OwnerId,
-		Users:      modelGame.Users,
 		MaxPlayers: modelGame.MaxPlayers,
 	})
 }
