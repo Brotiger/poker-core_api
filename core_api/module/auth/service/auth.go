@@ -38,7 +38,8 @@ type RequestGetUserDTO struct {
 }
 
 type ResponseGetUserDTO struct {
-	Id primitive.ObjectID
+	Id             primitive.ObjectID
+	EmailConfirmed bool
 }
 
 func (as *AuthService) GetUser(ctx context.Context, requestGetUserDTO RequestGetUserDTO) (*ResponseGetUserDTO, error) {
@@ -56,7 +57,8 @@ func (as *AuthService) GetUser(ctx context.Context, requestGetUserDTO RequestGet
 	}
 
 	return &ResponseGetUserDTO{
-		Id: *modelUser.Id,
+		Id:             *modelUser.Id,
+		EmailConfirmed: modelUser.EmailConfirmed,
 	}, nil
 }
 

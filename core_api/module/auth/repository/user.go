@@ -26,12 +26,10 @@ func (ur *UserRepository) FindUserByEmail(ctx context.Context, email string) (*m
 	if err := connection.DB.Collection(config.Cfg.MongoDB.Table.User).FindOne(
 		ctx,
 		bson.M{
-			"email":          email,
-			"emailConfirmed": true,
+			"email": email,
 		},
 		options.FindOne().SetHint(bson.D{
 			{Key: "email", Value: 1},
-			{Key: "emailConfirmed", Value: 1},
 		}),
 	).Decode(&modelUser); err != nil {
 		if err == mongo.ErrNoDocuments {

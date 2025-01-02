@@ -13,6 +13,7 @@ import (
 	"github.com/Brotiger/poker-core_api/core_api/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // @Summary Подтверждение почты
@@ -49,8 +50,11 @@ func (ah *AuthController) ConfirmEmail(c *fiber.Ctx) error {
 		},
 	); err != nil {
 		if errors.Is(err, cError.ErrCompareCode) || errors.Is(err, cError.ErrCodeNotFound) || errors.Is(err, cError.ErrUserNotFound) {
-			return c.Status(fiber.StatusNotFound).JSON(sharedResponse.Error400{
-				Message: "Невалидный код.",
+			return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.Error400{
+				Message: "Ошибка валидации.",
+				Errors: bson.M{
+					"code": "Невалидный код.",
+				},
 			})
 		}
 

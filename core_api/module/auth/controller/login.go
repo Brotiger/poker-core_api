@@ -61,6 +61,12 @@ func (a *AuthController) Login(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
+	if !modelUser.EmailConfirmed {
+		return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Error401{
+			Message: "Пользователь не подтвержден.",
+		})
+	}
+
 	dtoToken, err := a.RefreshTokenService.GenerateTokens(ctx, modelUser.Id)
 	if err != nil {
 		log.Errorf("failed to generate tokens, error: %v", err)
