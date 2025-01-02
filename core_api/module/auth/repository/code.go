@@ -35,7 +35,7 @@ func (cr *CodeRepository) FindCodeByUserId(ctx context.Context, id primitive.Obj
 			"userId": id,
 		},
 	).Decode(&modelCode); err != nil {
-		if err != mongo.ErrNoDocuments {
+		if err == mongo.ErrNoDocuments {
 			return nil, cError.ErrCodeNotFound
 		}
 
