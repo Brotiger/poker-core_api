@@ -22,7 +22,7 @@ import (
 // @Produce json
 // @Param request body request.ConfirmedEmail false "Body params"
 // @Success 200 "Успешный ответ."
-// @Failure 400 {object} sharedResponse.Error400 "Не валидный запрос."
+// @Failure 400 {object} sharedResponse.BadRequest "Не валидный запрос."
 // @Failure 500 "Ошибка сервера."
 func (ah *AuthController) ConfirmEmail(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)

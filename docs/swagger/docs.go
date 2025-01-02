@@ -41,7 +41,42 @@ const docTemplate = `{
                     "400": {
                         "description": "Не валидный запрос.",
                         "schema": {
-                            "$ref": "#/definitions/response.Error400"
+                            "$ref": "#/definitions/response.BadRequest"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера."
+                    }
+                }
+            }
+        },
+        "/auth/confirm_restore": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Подтверждение кода востановления",
+                "parameters": [
+                    {
+                        "description": "Body params",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_request.ConfirmedRestore"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ."
+                    },
+                    "400": {
+                        "description": "Не валидный запрос.",
+                        "schema": {
+                            "$ref": "#/definitions/response.BadRequest"
                         }
                     },
                     "500": {
@@ -84,13 +119,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Не валидный запрос.",
                         "schema": {
-                            "$ref": "#/definitions/response.Error400"
+                            "$ref": "#/definitions/response.BadRequest"
                         }
                     },
                     "401": {
                         "description": "Не верное имя пользователя или пароль.",
                         "schema": {
-                            "$ref": "#/definitions/response.Error401"
+                            "$ref": "#/definitions/response.Unauthorized"
                         }
                     },
                     "500": {
@@ -152,13 +187,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Не валидный запрос.",
                         "schema": {
-                            "$ref": "#/definitions/response.Error400"
+                            "$ref": "#/definitions/response.BadRequest"
                         }
                     },
                     "401": {
                         "description": "Неверный или просроченный токен обновления.",
                         "schema": {
-                            "$ref": "#/definitions/response.Error401"
+                            "$ref": "#/definitions/response.Unauthorized"
                         }
                     },
                     "500": {
@@ -190,13 +225,48 @@ const docTemplate = `{
                     "200": {
                         "description": "Успешный ответ.",
                         "schema": {
-                            "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_response.Register"
+                            "$ref": "#/definitions/response.OK"
                         }
                     },
                     "400": {
                         "description": "Не валидный запрос.",
                         "schema": {
-                            "$ref": "#/definitions/response.Error400"
+                            "$ref": "#/definitions/response.BadRequest"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера."
+                    }
+                }
+            }
+        },
+        "/auth/restore": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Востановление пароля",
+                "parameters": [
+                    {
+                        "description": "Body params",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_request.Restore"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ."
+                    },
+                    "400": {
+                        "description": "Не валидный запрос.",
+                        "schema": {
+                            "$ref": "#/definitions/response.BadRequest"
                         }
                     },
                     "500": {
@@ -252,13 +322,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Не валидный запрос.",
                         "schema": {
-                            "$ref": "#/definitions/response.Error400"
+                            "$ref": "#/definitions/response.BadRequest"
                         }
                     },
                     "401": {
                         "description": "Невалидный токен.",
                         "schema": {
-                            "$ref": "#/definitions/response.Error401"
+                            "$ref": "#/definitions/response.Unauthorized"
                         }
                     },
                     "500": {
@@ -299,13 +369,62 @@ const docTemplate = `{
                     "400": {
                         "description": "Не валидный запрос.",
                         "schema": {
-                            "$ref": "#/definitions/response.Error400"
+                            "$ref": "#/definitions/response.BadRequest"
                         }
                     },
                     "401": {
                         "description": "Невалидный токен.",
                         "schema": {
-                            "$ref": "#/definitions/response.Error401"
+                            "$ref": "#/definitions/response.Unauthorized"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера."
+                    }
+                }
+            }
+        },
+        "/game/join": {
+            "post": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Game"
+                ],
+                "summary": "Подключение к игре",
+                "parameters": [
+                    {
+                        "description": "Body params",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_request.Join"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ.",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.Join"
+                        }
+                    },
+                    "400": {
+                        "description": "Не валидный запрос.",
+                        "schema": {
+                            "$ref": "#/definitions/response.BadRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Невалидный токен.",
+                        "schema": {
+                            "$ref": "#/definitions/response.Unauthorized"
                         }
                     },
                     "500": {
@@ -349,7 +468,21 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
-                "user_id": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Brotiger_poker-core_api_core_api_module_auth_request.ConfirmedRestore": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }
@@ -404,12 +537,15 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_Brotiger_poker-core_api_core_api_module_auth_response.Register": {
+        "github_com_Brotiger_poker-core_api_core_api_module_auth_request.Restore": {
             "type": "object",
+            "required": [
+                "email"
+            ],
             "properties": {
-                "id": {
+                "email": {
                     "type": "string",
-                    "example": "507f191e810c19729de860ea"
+                    "example": "example@example.com"
                 }
             }
         },
@@ -449,7 +585,31 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_Brotiger_poker-core_api_core_api_module_game_request.Join": {
+            "type": "object",
+            "properties": {
+                "gameId": {
+                    "type": "string",
+                    "example": "507f1f77bcf86cd799439011"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "123456"
+                }
+            }
+        },
         "github_com_Brotiger_poker-core_api_core_api_module_game_response.Create": {
+            "type": "object",
+            "properties": {
+                "connect_token": {
+                    "type": "string"
+                },
+                "game": {
+                    "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.CreateGame"
+                }
+            }
+        },
+        "github_com_Brotiger_poker-core_api_core_api_module_game_response.CreateGame": {
             "type": "object",
             "properties": {
                 "_id": {
@@ -464,14 +624,6 @@ const docTemplate = `{
                     "type": "string",
                     "example": "test"
                 },
-                "owner_id": {
-                    "type": "string",
-                    "example": "507f1f77bcf86cd799439011"
-                },
-                "password": {
-                    "type": "string",
-                    "example": "123456"
-                },
                 "status": {
                     "type": "string",
                     "example": "waiting"
@@ -484,10 +636,39 @@ const docTemplate = `{
                     "example": [
                         "507f1f77bcf86cd799439011"
                     ]
+                },
+                "with_password": {
+                    "type": "boolean"
                 }
             }
         },
-        "github_com_Brotiger_poker-core_api_core_api_module_game_response.Game": {
+        "github_com_Brotiger_poker-core_api_core_api_module_game_response.Join": {
+            "type": "object",
+            "properties": {
+                "connect_token": {
+                    "type": "string"
+                },
+                "game": {
+                    "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.CreateGame"
+                }
+            }
+        },
+        "github_com_Brotiger_poker-core_api_core_api_module_game_response.List": {
+            "type": "object",
+            "properties": {
+                "games": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.ListGame"
+                    }
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 100
+                }
+            }
+        },
+        "github_com_Brotiger_poker-core_api_core_api_module_game_response.ListGame": {
             "type": "object",
             "properties": {
                 "count_players": {
@@ -520,22 +701,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_Brotiger_poker-core_api_core_api_module_game_response.List": {
-            "type": "object",
-            "properties": {
-                "games": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.Game"
-                    }
-                },
-                "total": {
-                    "type": "integer",
-                    "example": 100
-                }
-            }
-        },
-        "response.Error400": {
+        "response.BadRequest": {
             "type": "object",
             "properties": {
                 "errors": {},
@@ -544,7 +710,15 @@ const docTemplate = `{
                 }
             }
         },
-        "response.Error401": {
+        "response.OK": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Unauthorized": {
             "type": "object",
             "properties": {
                 "message": {

@@ -18,8 +18,8 @@ import (
 // @Router /auth/restore [post]
 // @Produce json
 // @Param request body request.Restore false "Body params"
-// @Success 200 {object} response.Restore "Успешный ответ."
-// @Failure 400 {object} sharedResponse.Error400 "Не валидный запрос."
+// @Success 200 "Успешный ответ."
+// @Failure 400 {object} sharedResponse.BadRequest "Не валидный запрос."
 // @Failure 500 "Ошибка сервера."
 func (ah *AuthController) Restore(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)

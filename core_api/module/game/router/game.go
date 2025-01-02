@@ -18,4 +18,5 @@ func SetupRouter(api fiber.Router) {
 	game.Get("", gameController.List)
 	game.Post("", gameMiddleware.AlreadyHasGame, gameController.Create)
 	game.Post("/start", gameController.Start)
+	game.Post("/join", gameController.Join)
 }

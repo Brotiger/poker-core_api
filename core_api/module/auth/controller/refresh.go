@@ -21,8 +21,8 @@ import (
 // @Produce json
 // @Param request body request.Refresh false "Body params"
 // @Success 200 {object} response.Token "Успешный ответ."
-// @Failure 400 {object} sharedResponse.Error400 "Не валидный запрос."
-// @Failure 401 {object} sharedResponse.Error401 "Неверный или просроченный токен обновления."
+// @Failure 400 {object} sharedResponse.BadRequest "Не валидный запрос."
+// @Failure 401 {object} sharedResponse.Unauthorized "Неверный или просроченный токен обновления."
 // @Failure 500 "Ошибка сервера."
 func (a *AuthController) Refresh(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)

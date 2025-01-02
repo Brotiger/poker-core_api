@@ -167,3 +167,39 @@ func (gr *GameRepository) GetGameByOwnerId(ctx context.Context, ownerId primitiv
 
 	return &modelGame, nil
 }
+
+func (gr *GameRepository) GetGameById(ctx context.Context, id primitive.ObjectID) (*model.Game, error) {
+	var modelGame model.Game
+	if err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).FindOne(
+		ctx,
+		bson.M{
+			"_id": id,
+		},
+	).Decode(&modelGame); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, cError.ErrGameNotFound
+		}
+
+		return nil, fmt.Errorf("failed to find one, error: %w", err)
+	}
+
+	return &modelGame, nil
+}
+
+func (gr *GameRepository) AddUserToGame(ctx context.Context, userId primitive.ObjectID, gameId primitive.ObjectID) error {
+	if _, err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).UpdateOne(
+		ctx,
+		bson.M{
+			"_id": gameId,
+		},
+		bson.M{
+			"$push": bson.M{
+				"users": userId,
+			},
+		},
+	); err != nil {
+		return fmt.Errorf("failed to update one, error: %w", err)
+	}
+
+	return nil
+}

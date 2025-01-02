@@ -20,8 +20,8 @@ import (
 // @Produce json
 // @Param request query request.List false "Query params"
 // @Success 200 {object} response.List "Успешный ответ."
-// @Failure 400 {object} sharedResponse.Error400 "Не валидный запрос."
-// @Failure 401 {object} sharedResponse.Error401 "Невалидный токен."
+// @Failure 400 {object} sharedResponse.BadRequest "Не валидный запрос."
+// @Failure 401 {object} sharedResponse.Unauthorized "Невалидный токен."
 // @Failure 500 "Ошибка сервера."
 // @securityDefinitions.apikey Authorization
 // @in header

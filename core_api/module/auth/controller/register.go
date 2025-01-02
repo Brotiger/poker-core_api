@@ -19,8 +19,8 @@ import (
 // @Router /auth/register [post]
 // @Produce json
 // @Param request body request.Register false "Body params"
-// @Success 200 {object} response.Register "Успешный ответ."
-// @Failure 400 {object} sharedResponse.Error400 "Не валидный запрос."
+// @Success 200 {object} sharedResponse.OK "Успешный ответ."
+// @Failure 400 {object} sharedResponse.BadRequest "Не валидный запрос."
 // @Failure 500 "Ошибка сервера."
 func (ah *AuthController) Register(c *fiber.Ctx) error {
 	ctx, cancelCtx := context.WithTimeout(context.Background(), time.Duration(config.Cfg.Fiber.RequestTimeoutMs)*time.Millisecond)
@@ -77,5 +77,7 @@ func (ah *AuthController) Register(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	return nil
+	return c.Status(fiber.StatusOK).JSON(sharedResponse.OK{
+		Message: "Регистрация пройдена успешно.",
+	})
 }

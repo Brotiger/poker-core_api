@@ -4,7 +4,16 @@ definitions:
     properties:
       code:
         type: string
-      user_id:
+      email:
+        type: string
+    type: object
+  github_com_Brotiger_poker-core_api_core_api_module_auth_request.ConfirmedRestore:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+      password:
         type: string
     type: object
   github_com_Brotiger_poker-core_api_core_api_module_auth_request.Login:
@@ -43,11 +52,13 @@ definitions:
     - password
     - username
     type: object
-  github_com_Brotiger_poker-core_api_core_api_module_auth_response.Register:
+  github_com_Brotiger_poker-core_api_core_api_module_auth_request.Restore:
     properties:
-      id:
-        example: 507f191e810c19729de860ea
+      email:
+        example: example@example.com
         type: string
+    required:
+    - email
     type: object
   github_com_Brotiger_poker-core_api_core_api_module_auth_response.Token:
     properties:
@@ -75,7 +86,23 @@ definitions:
     - max_players
     - name
     type: object
+  github_com_Brotiger_poker-core_api_core_api_module_game_request.Join:
+    properties:
+      gameId:
+        example: 507f1f77bcf86cd799439011
+        type: string
+      password:
+        example: "123456"
+        type: string
+    type: object
   github_com_Brotiger_poker-core_api_core_api_module_game_response.Create:
+    properties:
+      connect_token:
+        type: string
+      game:
+        $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.CreateGame'
+    type: object
+  github_com_Brotiger_poker-core_api_core_api_module_game_response.CreateGame:
     properties:
       _id:
         example: 507f1f77bcf86cd799439011
@@ -86,12 +113,6 @@ definitions:
       name:
         example: test
         type: string
-      owner_id:
-        example: 507f1f77bcf86cd799439011
-        type: string
-      password:
-        example: "123456"
-        type: string
       status:
         example: waiting
         type: string
@@ -101,8 +122,27 @@ definitions:
         items:
           type: string
         type: array
+      with_password:
+        type: boolean
     type: object
-  github_com_Brotiger_poker-core_api_core_api_module_game_response.Game:
+  github_com_Brotiger_poker-core_api_core_api_module_game_response.Join:
+    properties:
+      connect_token:
+        type: string
+      game:
+        $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.CreateGame'
+    type: object
+  github_com_Brotiger_poker-core_api_core_api_module_game_response.List:
+    properties:
+      games:
+        items:
+          $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.ListGame'
+        type: array
+      total:
+        example: 100
+        type: integer
+    type: object
+  github_com_Brotiger_poker-core_api_core_api_module_game_response.ListGame:
     properties:
       count_players:
         example: 3
@@ -126,23 +166,18 @@ definitions:
         example: true
         type: boolean
     type: object
-  github_com_Brotiger_poker-core_api_core_api_module_game_response.List:
-    properties:
-      games:
-        items:
-          $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.Game'
-        type: array
-      total:
-        example: 100
-        type: integer
-    type: object
-  response.Error400:
+  response.BadRequest:
     properties:
       errors: {}
       message:
         type: string
     type: object
-  response.Error401:
+  response.OK:
+    properties:
+      message:
+        type: string
+    type: object
+  response.Unauthorized:
     properties:
       message:
         type: string
@@ -167,10 +202,32 @@ paths:
         "400":
           description: Не валидный запрос.
           schema:
-            $ref: '#/definitions/response.Error400'
+            $ref: '#/definitions/response.BadRequest'
         "500":
           description: Ошибка сервера.
       summary: Подтверждение почты
+      tags:
+      - Auth
+  /auth/confirm_restore:
+    post:
+      parameters:
+      - description: Body params
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_request.ConfirmedRestore'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ.
+        "400":
+          description: Не валидный запрос.
+          schema:
+            $ref: '#/definitions/response.BadRequest'
+        "500":
+          description: Ошибка сервера.
+      summary: Подтверждение кода востановления
       tags:
       - Auth
   /auth/login:
@@ -191,11 +248,11 @@ paths:
         "400":
           description: Не валидный запрос.
           schema:
-            $ref: '#/definitions/response.Error400'
+            $ref: '#/definitions/response.BadRequest'
         "401":
           description: Не верное имя пользователя или пароль.
           schema:
-            $ref: '#/definitions/response.Error401'
+            $ref: '#/definitions/response.Unauthorized'
         "500":
           description: Ошибка сервера.
       security:
@@ -235,11 +292,11 @@ paths:
         "400":
           description: Не валидный запрос.
           schema:
-            $ref: '#/definitions/response.Error400'
+            $ref: '#/definitions/response.BadRequest'
         "401":
           description: Неверный или просроченный токен обновления.
           schema:
-            $ref: '#/definitions/response.Error401'
+            $ref: '#/definitions/response.Unauthorized'
         "500":
           description: Ошибка сервера.
       summary: Обновление токена
@@ -259,14 +316,36 @@ paths:
         "200":
           description: Успешный ответ.
           schema:
-            $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_response.Register'
+            $ref: '#/definitions/response.OK'
         "400":
           description: Не валидный запрос.
           schema:
-            $ref: '#/definitions/response.Error400'
+            $ref: '#/definitions/response.BadRequest'
         "500":
           description: Ошибка сервера.
       summary: Регистрация
+      tags:
+      - Auth
+  /auth/restore:
+    post:
+      parameters:
+      - description: Body params
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_auth_request.Restore'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ.
+        "400":
+          description: Не валидный запрос.
+          schema:
+            $ref: '#/definitions/response.BadRequest'
+        "500":
+          description: Ошибка сервера.
+      summary: Востановление пароля
       tags:
       - Auth
   /game:
@@ -297,11 +376,11 @@ paths:
         "400":
           description: Не валидный запрос.
           schema:
-            $ref: '#/definitions/response.Error400'
+            $ref: '#/definitions/response.BadRequest'
         "401":
           description: Невалидный токен.
           schema:
-            $ref: '#/definitions/response.Error401'
+            $ref: '#/definitions/response.Unauthorized'
         "500":
           description: Ошибка сервера.
       security:
@@ -326,16 +405,46 @@ paths:
         "400":
           description: Не валидный запрос.
           schema:
-            $ref: '#/definitions/response.Error400'
+            $ref: '#/definitions/response.BadRequest'
         "401":
           description: Невалидный токен.
           schema:
-            $ref: '#/definitions/response.Error401'
+            $ref: '#/definitions/response.Unauthorized'
         "500":
           description: Ошибка сервера.
       security:
       - Authorization: []
       summary: Создание игры
+      tags:
+      - Game
+  /game/join:
+    post:
+      parameters:
+      - description: Body params
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_request.Join'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ.
+          schema:
+            $ref: '#/definitions/github_com_Brotiger_poker-core_api_core_api_module_game_response.Join'
+        "400":
+          description: Не валидный запрос.
+          schema:
+            $ref: '#/definitions/response.BadRequest'
+        "401":
+          description: Невалидный токен.
+          schema:
+            $ref: '#/definitions/response.Unauthorized'
+        "500":
+          description: Ошибка сервера.
+      security:
+      - Authorization: []
+      summary: Подключение к игре
       tags:
       - Game
   /game/start:

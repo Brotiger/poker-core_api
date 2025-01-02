@@ -27,7 +27,7 @@ type RequestGetGameListDTO struct {
 	Size int64
 }
 
-type ResponseGetGameListDTO struct {
+type ResponsGetGameListDTO struct {
 	Id           primitive.ObjectID
 	Status       string
 	OwnerId      primitive.ObjectID
@@ -37,7 +37,7 @@ type ResponseGetGameListDTO struct {
 	WithPassword bool
 }
 
-func (gs *GameService) GetGameList(ctx context.Context, requestGetGameListDTO RequestGetGameListDTO) ([]ResponseGetGameListDTO, int64, error) {
+func (gs *GameService) GetGameList(ctx context.Context, requestGetGameListDTO RequestGetGameListDTO) ([]ResponsGetGameListDTO, int64, error) {
 	modelGames, err := gs.GameRepository.GetGames(ctx, repository.RequestGetGamesDTO{
 		Name: requestGetGameListDTO.Name,
 		From: requestGetGameListDTO.From,
@@ -47,9 +47,9 @@ func (gs *GameService) GetGameList(ctx context.Context, requestGetGameListDTO Re
 		return nil, 0, fmt.Errorf("failed to get games, error: %w", err)
 	}
 
-	var responseGetGameListDTO []ResponseGetGameListDTO
+	var responsGetGameListDTO []ResponsGetGameListDTO
 	for _, modelGame := range modelGames {
-		responseGetGameListDTO = append(responseGetGameListDTO, ResponseGetGameListDTO{
+		responsGetGameListDTO = append(responsGetGameListDTO, ResponsGetGameListDTO{
 			Id:           *modelGame.Id,
 			Status:       modelGame.Status,
 			OwnerId:      modelGame.OwnerId,
@@ -67,7 +67,7 @@ func (gs *GameService) GetGameList(ctx context.Context, requestGetGameListDTO Re
 		return nil, 0, fmt.Errorf("failed to get game count, error: %w", err)
 	}
 
-	return responseGetGameListDTO, total, nil
+	return responsGetGameListDTO, total, nil
 }
 
 type RequestCreateGameDTO struct {
@@ -77,7 +77,7 @@ type RequestCreateGameDTO struct {
 	Password   *string
 }
 
-type ResponseCreateGameDTO struct {
+type ResponsCreateGameDTO struct {
 	Id         primitive.ObjectID
 	Status     string
 	Name       string
@@ -86,7 +86,7 @@ type ResponseCreateGameDTO struct {
 	Users      []primitive.ObjectID
 }
 
-func (gs *GameService) CreateGame(ctx context.Context, requestCreateGameDTO RequestCreateGameDTO) (*ResponseCreateGameDTO, error) {
+func (gs *GameService) CreateGame(ctx context.Context, requestCreateGameDTO RequestCreateGameDTO) (*ResponsCreateGameDTO, error) {
 	timeNow := time.Now()
 	modelGame := model.Game{
 		Status:     "waiting",
@@ -104,13 +104,52 @@ func (gs *GameService) CreateGame(ctx context.Context, requestCreateGameDTO Requ
 		return nil, fmt.Errorf("failed to create game, error: %w", err)
 	}
 
-	return &ResponseCreateGameDTO{
+	return &ResponsCreateGameDTO{
 		Id:         insertId,
 		Status:     "waiting",
 		Name:       requestCreateGameDTO.Name,
 		Password:   requestCreateGameDTO.Password,
 		MaxPlayers: requestCreateGameDTO.MaxPlayers,
 		Users:      modelGame.Users,
+	}, nil
+}
+
+type RequestJoinGameDTO struct {
+	GameId   primitive.ObjectID
+	UserId   primitive.ObjectID
+	Password *string
+}
+
+type ResponsJoinGameDTO struct {
+	Id         primitive.ObjectID
+	Status     string
+	Name       string
+	Password   *string
+	MaxPlayers int
+	Users      []primitive.ObjectID
+}
+
+func (gs *GameService) JoinGame(ctx context.Context, requestJoinGameDTO RequestJoinGameDTO) (*ResponsJoinGameDTO, error) {
+	modelGame, err := gs.GameRepository.GetGameById(ctx, requestJoinGameDTO.GameId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get game by id, error: %w", err)
+	}
+
+	if modelGame.Password != requestJoinGameDTO.Password {
+		return nil, cError.ErrComparePassword
+	}
+
+	if err := gs.GameRepository.AddUserToGame(ctx, requestJoinGameDTO.UserId, requestJoinGameDTO.GameId); err != nil {
+		return nil, fmt.Errorf("failed to add user to game, error: %w", err)
+	}
+
+	return &ResponsJoinGameDTO{
+		Id:         *modelGame.Id,
+		Status:     modelGame.Status,
+		Name:       modelGame.Name,
+		Password:   modelGame.Password,
+		MaxPlayers: modelGame.MaxPlayers,
+		Users:      append(modelGame.Users, requestJoinGameDTO.UserId),
 	}, nil
 }
 
