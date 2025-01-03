@@ -1,7 +1,7 @@
 package config
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/caarlos0/env/v7"
 )
