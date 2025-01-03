@@ -8,7 +8,7 @@ import (
 
 func SetupRouter(api fiber.Router) {
 	authController := handler.NewAuthController()
-	authMiddleware := sharedMiddleware.NewShared()
+	authMiddleware := sharedMiddleware.NewAuthMiddleware()
 
 	auth := api.Group("/auth")
 	auth.Post("/login", authController.Login)

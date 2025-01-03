@@ -10,7 +10,7 @@ import (
 func SetupRouter(api fiber.Router) {
 	gameController := handler.NewGameController()
 
-	authMiddleware := sharedMiddleware.NewShared()
+	authMiddleware := sharedMiddleware.NewAuthMiddleware()
 	gameMiddleware := middleware.NewGameMiddleware()
 
 	game := api.Group("/game")

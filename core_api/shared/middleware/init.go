@@ -6,7 +6,7 @@ type AuthMiddleware struct {
 	tokenService *service.TokenService
 }
 
-func NewShared() *AuthMiddleware {
+func NewAuthMiddleware() *AuthMiddleware {
 	return &AuthMiddleware{
 		tokenService: service.NewTokenService(),
 	}
