@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/Brotiger/poker-core_api/core_api/module/auth/service"
-	sharedService "github.com/Brotiger/poker-core_api/core_api/shared/service"
+	sharedService "github.com/Brotiger/poker-core_api/pkg/service"
 )
 
 type AuthController struct {

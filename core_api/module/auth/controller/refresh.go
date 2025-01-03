@@ -8,8 +8,8 @@ import (
 	"github.com/Brotiger/poker-core_api/core_api/module/auth/request"
 	"github.com/Brotiger/poker-core_api/core_api/module/auth/response"
 	sharedResponse "github.com/Brotiger/poker-core_api/core_api/shared/response"
-	sharedService "github.com/Brotiger/poker-core_api/core_api/shared/service"
 	"github.com/Brotiger/poker-core_api/core_api/validator"
+	pkgService "github.com/Brotiger/poker-core_api/pkg/service"
 	"github.com/gofiber/fiber/v2"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -44,7 +44,7 @@ func (a *AuthController) Refresh(c *fiber.Ctx) error {
 
 	tokenClaims, err := a.SharedTokenService.VerifyToken(requetRefresh.RefreshToken)
 	if err != nil {
-		if err == sharedService.ErrInvalidToken {
+		if err == pkgService.ErrInvalidToken {
 			return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Unauthorized{
 				Message: "Просроченный токен обновления.",
 			})

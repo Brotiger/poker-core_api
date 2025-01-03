@@ -27,7 +27,9 @@ import (
 // @in header
 // @name Authorization
 func main() {
-	ctx := context.Background()
+	ctx, cancelCtx := context.WithCancel(context.Background())
+	defer cancelCtx()
+
 	app := fiber.New(fiber.Config{
 		DisableStartupMessage: config.Cfg.Fiber.DisableStartupMessage,
 	})
