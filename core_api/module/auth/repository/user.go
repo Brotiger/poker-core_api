@@ -8,7 +8,7 @@ import (
 	"github.com/Brotiger/poker-core_api/core_api/config"
 	"github.com/Brotiger/poker-core_api/core_api/connection"
 	cError "github.com/Brotiger/poker-core_api/core_api/module/auth/error"
-	pkgModel "github.com/Brotiger/poker-core_api/pkg/mongodb/model"
+	"github.com/Brotiger/poker-core_api/core_api/module/auth/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -21,8 +21,8 @@ func NewUserRepository() *UserRepository {
 	return &UserRepository{}
 }
 
-func (ur *UserRepository) FindUserByEmail(ctx context.Context, email string) (*pkgModel.User, error) {
-	var modelUser pkgModel.User
+func (ur *UserRepository) FindUserByEmail(ctx context.Context, email string) (*model.User, error) {
+	var modelUser model.User
 	if err := connection.DB.Collection(config.Cfg.MongoDB.Table.User).FindOne(
 		ctx,
 		bson.M{
@@ -41,7 +41,7 @@ func (ur *UserRepository) FindUserByEmail(ctx context.Context, email string) (*p
 	return &modelUser, nil
 }
 
-func (ur *UserRepository) CreateUser(ctx context.Context, modelUser pkgModel.User) (*primitive.ObjectID, error) {
+func (ur *UserRepository) CreateUser(ctx context.Context, modelUser model.User) (*primitive.ObjectID, error) {
 	result, err := connection.DB.Collection(config.Cfg.MongoDB.Table.User).InsertOne(ctx, modelUser)
 	if err != nil {
 		return nil, fmt.Errorf("failed to insert one, error: %w", err)
