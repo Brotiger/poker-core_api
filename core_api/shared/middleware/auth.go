@@ -1,17 +1,23 @@
 package middleware
 
 import (
-	"errors"
-	"strings"
-
 	"github.com/Brotiger/poker-core_api/core_api/shared/response"
+	"github.com/Brotiger/poker-core_api/pkg/service"
 	"github.com/gofiber/fiber/v2"
 )
 
-const headerPrefix = "Bearer"
+type AuthMiddleware struct {
+	tokenService *service.TokenService
+}
+
+func NewAuthMiddleware() *AuthMiddleware {
+	return &AuthMiddleware{
+		tokenService: service.NewTokenService(),
+	}
+}
 
 func (am *AuthMiddleware) Token(c *fiber.Ctx) error {
-	token, err := am.getTokenFromHeader(c)
+	token, err := am.tokenService.GetToken(c.Get("Authorization"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(response.BadRequest{
 			Message: "Неверный формат токена.",
@@ -28,14 +34,4 @@ func (am *AuthMiddleware) Token(c *fiber.Ctx) error {
 	c.Locals("userId", tokenClaims.UserId)
 
 	return c.Next()
-}
-
-func (am *AuthMiddleware) getTokenFromHeader(c *fiber.Ctx) (string, error) {
-	header := c.Get("Authorization")
-	l := len(headerPrefix)
-	if len(header) < l+2 || header[:l] != headerPrefix {
-		return "", errors.New("invalid token format")
-	}
-
-	return strings.TrimSpace(header[l:]), nil
 }

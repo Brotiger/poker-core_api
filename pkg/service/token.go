@@ -3,11 +3,14 @@ package service
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/Brotiger/poker-core_api/core_api/config"
 	"github.com/Brotiger/poker-core_api/pkg/mongodb/model"
 	"github.com/golang-jwt/jwt"
 )
+
+const headerPrefix = "Bearer"
 
 var ErrInvalidToken = errors.New("invalid token")
 
@@ -35,4 +38,13 @@ func (ts *TokenService) VerifyToken(tokenString string) (*model.JWTClaims, error
 	}
 
 	return tokenClaims, nil
+}
+
+func (ts *TokenService) GetToken(accessToken string) (string, error) {
+	l := len(headerPrefix)
+	if len(accessToken) < l+2 || accessToken[:l] != headerPrefix {
+		return "", errors.New("invalid token format")
+	}
+
+	return strings.TrimSpace(accessToken[l:]), nil
 }
