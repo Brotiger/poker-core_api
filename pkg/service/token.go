@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/Brotiger/poker-core_api/core_api/config"
-	"github.com/Brotiger/poker-core_api/pkg/mongodb/model"
+	"github.com/Brotiger/poker-core_api/pkg/model"
 	"github.com/golang-jwt/jwt"
 )
 

@@ -11,7 +11,7 @@ import (
 	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
-	pkgModel "github.com/Brotiger/poker-core_api/pkg/mongodb/model"
+	pkgModel "github.com/Brotiger/poker-core_api/pkg/model"
 )
 
 type RefreshTokenService struct {

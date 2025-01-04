@@ -12,6 +12,7 @@ import (
 	"github.com/Brotiger/poker-core_api/core_api/module/auth/model"
 	"github.com/Brotiger/poker-core_api/core_api/module/auth/repository"
 	sharedService "github.com/Brotiger/poker-core_api/core_api/shared/service"
+	pkgModel "github.com/Brotiger/poker-core_api/pkg/mongodb/model"
 	natsModel "github.com/Brotiger/poker-core_api/pkg/nats/model"
 	"github.com/nats-io/nats.go"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -75,7 +76,7 @@ func (as *AuthService) Register(ctx context.Context, requestRegisterDTO RequestR
 	}
 
 	timeNow := time.Now()
-	modelUser := model.User{
+	modelUser := pkgModel.User{
 		Username:  requestRegisterDTO.Username,
 		Email:     requestRegisterDTO.Email,
 		Password:  string(hashedPassword),

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/Brotiger/poker-core_api/core_api/config"
-	pkgModel "github.com/Brotiger/poker-core_api/pkg/mongodb/model"
+	pkgModel "github.com/Brotiger/poker-core_api/pkg/model"
 	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
