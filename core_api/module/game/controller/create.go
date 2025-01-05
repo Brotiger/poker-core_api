@@ -51,6 +51,18 @@ func (gh *GameController) Create(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
+	exits, err := gh.gameService.UserHasGame(ctx, userId)
+	if err != nil {
+		log.Errorf("failed to check user has game, error: %v", err)
+		return fiber.NewError(fiber.StatusInternalServerError)
+	}
+
+	if exits {
+		return c.Status(fiber.StatusBadRequest).JSON(sharedResponse.BadRequest{
+			Message: "У пользователя уже есть игра.",
+		})
+	}
+
 	responsCreateGameDTO, err := gh.gameService.CreateGame(ctx, service.RequestCreateGameDTO{
 		UserId:     userId,
 		Name:       requetCreate.Name,

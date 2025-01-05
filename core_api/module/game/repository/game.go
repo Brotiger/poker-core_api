@@ -98,18 +98,17 @@ func (gr *GameRepository) GetGameCount(ctx context.Context, requestGetGameCountD
 	return count, nil
 }
 
-func (gr *GameRepository) CreateGame(ctx context.Context, modelGame model.Game) (primitive.ObjectID, error) {
-	var inserId primitive.ObjectID
+func (gr *GameRepository) CreateGame(ctx context.Context, modelGame model.Game) (*primitive.ObjectID, error) {
 	result, err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).InsertOne(
 		ctx,
 		modelGame,
 	)
 	if err != nil {
-		return inserId, fmt.Errorf("failed to insert one, error: %w", err)
+		return nil, fmt.Errorf("failed to insert one, error: %w", err)
 	}
 
-	inserId = result.InsertedID.(primitive.ObjectID)
-	return inserId, nil
+	insertId := result.InsertedID.(primitive.ObjectID)
+	return &insertId, nil
 }
 
 func (gr *GameRepository) CountUserGames(ctx context.Context, ownerId primitive.ObjectID) (int64, error) {
@@ -186,18 +185,15 @@ func (gr *GameRepository) GetGameById(ctx context.Context, id primitive.ObjectID
 	return &modelGame, nil
 }
 
-func (gr *GameRepository) AddUserToGame(ctx context.Context, userId primitive.ObjectID, gameId primitive.ObjectID) error {
+func (gr *GameRepository) IncCountPlayers(ctx context.Context, gameId primitive.ObjectID) error {
 	if _, err := connection.DB.Collection(config.Cfg.MongoDB.Table.Game).UpdateOne(
 		ctx,
 		bson.M{
 			"_id": gameId,
 		},
 		bson.M{
-			"$push": bson.M{
-				"users": bson.M{
-					"userId": userId,
-					"status": "waiting",
-				},
+			"$inc": bson.M{
+				"countPlayers": 1,
 			},
 		},
 	); err != nil {

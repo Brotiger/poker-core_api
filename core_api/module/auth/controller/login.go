@@ -23,7 +23,7 @@ import (
 // @Param request body request.Login false "Body params"
 // @Success 200 {object} response.Token "Успешный ответ."
 // @Failure 400 {object} sharedResponse.BadRequest "Не валидный запрос."
-// @Failure 401 {object} sharedResponse.Unauthorized "Не верное имя пользователя или пароль."
+// @Failure 403 {object} sharedResponse.Forbidden "Не верное имя пользователя или пароль."
 // @Failure 500 "Ошибка сервера."
 // @securityDefinitions.apikey Authorization
 // @in header
@@ -52,7 +52,7 @@ func (a *AuthController) Login(c *fiber.Ctx) error {
 	})
 	if err != nil {
 		if errors.Is(err, cError.ErrUserNotFound) || errors.Is(err, cError.ErrCompareHashAndPassword) {
-			return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Unauthorized{
+			return c.Status(fiber.StatusForbidden).JSON(sharedResponse.Forbidden{
 				Message: "Не верное имя пользователя или пароль.",
 			})
 		}

@@ -13,5 +13,6 @@ type MongoDB struct {
 		Code         string `env:"CORE_API_MONGODB_TABLE_CODE" envDefault:"code"`
 		RefreshToken string `env:"CORE_API_MONGODB_TABLE_REFRESH_TOKEN" envDefault:"refresh_token"`
 		JoinToken    string `env:"CORE_API_MONGODB_TABLE_JOIN_TOKEN" envDefault:"join_token"`
+		Player       string `env:"CORE_API_MONGODB_TABLE_PLAYER" envDefault:"player"`
 	}
 }

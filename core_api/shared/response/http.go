@@ -16,3 +16,7 @@ type NotFound struct {
 type OK struct {
 	Message string `json:"message"`
 }
+
+type Forbidden struct {
+	Message string `json:"message"`
+}

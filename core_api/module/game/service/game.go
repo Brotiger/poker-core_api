@@ -12,12 +12,14 @@ import (
 )
 
 type GameService struct {
-	GameRepository *repository.GameRepository
+	gameRepository   *repository.GameRepository
+	playerRepository *repository.PlayerRepository
 }
 
 func NewGameService() *GameService {
 	return &GameService{
-		GameRepository: repository.NewGameRepository(),
+		gameRepository:   repository.NewGameRepository(),
+		playerRepository: repository.NewPlayerRepository(),
 	}
 }
 
@@ -38,7 +40,7 @@ type ResponsGetGameListDTO struct {
 }
 
 func (gs *GameService) GetGameList(ctx context.Context, requestGetGameListDTO RequestGetGameListDTO) ([]ResponsGetGameListDTO, int64, error) {
-	modelGames, err := gs.GameRepository.GetGames(ctx, repository.RequestGetGamesDTO{
+	modelGames, err := gs.gameRepository.GetGames(ctx, repository.RequestGetGamesDTO{
 		Name: requestGetGameListDTO.Name,
 		From: requestGetGameListDTO.From,
 		Size: requestGetGameListDTO.Size,
@@ -54,13 +56,13 @@ func (gs *GameService) GetGameList(ctx context.Context, requestGetGameListDTO Re
 			Status:       modelGame.Status,
 			OwnerId:      modelGame.OwnerId,
 			Name:         modelGame.Name,
-			CountPlayers: len(modelGame.Users),
+			CountPlayers: modelGame.CountPlayers,
 			MaxPlayers:   modelGame.MaxPlayers,
 			WithPassword: modelGame.Password != nil,
 		})
 	}
 
-	total, err := gs.GameRepository.GetGameCount(ctx, repository.RequestGetGameCountDTO{
+	total, err := gs.gameRepository.GetGameCount(ctx, repository.RequestGetGameCountDTO{
 		Name: requestGetGameListDTO.Name,
 	})
 	if err != nil {
@@ -97,13 +99,27 @@ func (gs *GameService) CreateGame(ctx context.Context, requestCreateGameDTO Requ
 		CreatedAt:  timeNow,
 	}
 
-	insertId, err := gs.GameRepository.CreateGame(ctx, modelGame)
+	insertId, err := gs.gameRepository.CreateGame(ctx, modelGame)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create game, error: %w", err)
 	}
 
+	if _, err := gs.playerRepository.CreatePlayer(ctx, model.Player{
+		GameId:    *insertId,
+		UserId:    requestCreateGameDTO.UserId,
+		Status:    "waiting",
+		UpdatedAt: timeNow,
+		CreatedAt: timeNow,
+	}); err != nil {
+		return nil, fmt.Errorf("failed to create player, error: %w", err)
+	}
+
+	if err := gs.gameRepository.IncCountPlayers(ctx, *insertId); err != nil {
+		return nil, fmt.Errorf("failed to inc count players, error: %w", err)
+	}
+
 	return &ResponsCreateGameDTO{
-		Id:         insertId,
+		Id:         *insertId,
 		Status:     "waiting",
 		Name:       requestCreateGameDTO.Name,
 		Password:   requestCreateGameDTO.Password,
@@ -126,7 +142,7 @@ type ResponsJoinGameDTO struct {
 }
 
 func (gs *GameService) JoinGame(ctx context.Context, requestJoinGameDTO RequestJoinGameDTO) (*ResponsJoinGameDTO, error) {
-	modelGame, err := gs.GameRepository.GetGameById(ctx, requestJoinGameDTO.GameId)
+	modelGame, err := gs.gameRepository.GetGameById(ctx, requestJoinGameDTO.GameId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get game by id, error: %w", err)
 	}
@@ -135,8 +151,19 @@ func (gs *GameService) JoinGame(ctx context.Context, requestJoinGameDTO RequestJ
 		return nil, cError.ErrComparePassword
 	}
 
-	if err := gs.GameRepository.AddUserToGame(ctx, requestJoinGameDTO.UserId, requestJoinGameDTO.GameId); err != nil {
-		return nil, fmt.Errorf("failed to add user to game, error: %w", err)
+	timeNow := time.Now()
+	if _, err := gs.playerRepository.CreatePlayer(ctx, model.Player{
+		GameId:    requestJoinGameDTO.GameId,
+		UserId:    requestJoinGameDTO.UserId,
+		Status:    "waiting",
+		UpdatedAt: timeNow,
+		CreatedAt: timeNow,
+	}); err != nil {
+		return nil, fmt.Errorf("failed to create player, error: %w", err)
+	}
+
+	if err := gs.gameRepository.IncCountPlayers(ctx, requestJoinGameDTO.GameId); err != nil {
+		return nil, fmt.Errorf("failed to inc count players, error: %w", err)
 	}
 
 	return &ResponsJoinGameDTO{
@@ -149,7 +176,7 @@ func (gs *GameService) JoinGame(ctx context.Context, requestJoinGameDTO RequestJ
 }
 
 func (gs *GameService) StartGame(ctx context.Context, userId primitive.ObjectID) error {
-	if err := gs.GameRepository.UpdateGameStatus(ctx, userId, "started"); err != nil {
+	if err := gs.gameRepository.UpdateGameStatus(ctx, userId, "started"); err != nil {
 		return fmt.Errorf("failed to update game status, error: %w", err)
 	}
 
@@ -157,7 +184,7 @@ func (gs *GameService) StartGame(ctx context.Context, userId primitive.ObjectID)
 }
 
 func (gs *GameService) UserHasGame(ctx context.Context, userId primitive.ObjectID) (bool, error) {
-	count, err := gs.GameRepository.CountUserGames(ctx, userId)
+	count, err := gs.gameRepository.CountUserGames(ctx, userId)
 	if err != nil {
 		return false, fmt.Errorf("failed to count user games count, error: %w", err)
 	}
@@ -169,21 +196,22 @@ func (gs *GameService) UserHasGame(ctx context.Context, userId primitive.ObjectI
 	return true, nil
 }
 
-func (gs *GameService) GameCanBeStarted(ctx context.Context, userId primitive.ObjectID) (bool, error) {
-	modelGame, err := gs.GameRepository.GetGameByOwnerId(ctx, userId)
+func (gs *GameService) CheckGameAllowToJoin(ctx context.Context, gameId primitive.ObjectID) (bool, error) {
+	modelGame, err := gs.gameRepository.GetGameById(ctx, gameId)
 	if err != nil {
-		if err == cError.ErrGameNotFound {
-			return false, nil
-		}
-
-		return false, fmt.Errorf("failed to get game by owner id, error: %w", err)
+		return false, fmt.Errorf("failed to get game by id, error: %w", err)
 	}
 
 	if modelGame.Status != "waiting" {
 		return false, nil
 	}
 
-	if modelGame.MaxPlayers != len(modelGame.Users) {
+	countPlayers, err := gs.playerRepository.CountPlayersByGameId(ctx, gameId)
+	if err != nil {
+		return false, fmt.Errorf("failed to count players by game id, error: %w", err)
+	}
+
+	if int(countPlayers) >= modelGame.MaxPlayers {
 		return false, nil
 	}
 
