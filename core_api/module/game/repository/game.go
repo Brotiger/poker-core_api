@@ -194,7 +194,10 @@ func (gr *GameRepository) AddUserToGame(ctx context.Context, userId primitive.Ob
 		},
 		bson.M{
 			"$push": bson.M{
-				"users": userId,
+				"users": bson.M{
+					"userId": userId,
+					"status": "waiting",
+				},
 			},
 		},
 	); err != nil {

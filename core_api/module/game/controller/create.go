@@ -51,7 +51,7 @@ func (gh *GameController) Create(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	modelGame, err := gh.gameService.CreateGame(ctx, service.RequestCreateGameDTO{
+	responsCreateGameDTO, err := gh.gameService.CreateGame(ctx, service.RequestCreateGameDTO{
 		UserId:     userId,
 		Name:       requetCreate.Name,
 		Password:   requetCreate.Password,
@@ -63,7 +63,7 @@ func (gh *GameController) Create(c *fiber.Ctx) error {
 	}
 
 	connectToken, err := gh.connectTokenService.GenerateConnectToken(ctx, service.RequestGenerateConnectToken{
-		GameId: modelGame.Id,
+		GameId: responsCreateGameDTO.Id,
 		UserId: userId,
 	})
 	if err != nil {
@@ -73,12 +73,11 @@ func (gh *GameController) Create(c *fiber.Ctx) error {
 
 	return c.JSON(response.Create{
 		Game: response.CreateGame{
-			Id:           modelGame.Id,
-			Status:       modelGame.Status,
-			Name:         modelGame.Name,
-			WithPassword: modelGame.Password != nil,
-			MaxPlayers:   modelGame.MaxPlayers,
-			Users:        modelGame.Users,
+			Id:           responsCreateGameDTO.Id,
+			Status:       responsCreateGameDTO.Status,
+			Name:         responsCreateGameDTO.Name,
+			WithPassword: responsCreateGameDTO.Password != nil,
+			MaxPlayers:   responsCreateGameDTO.MaxPlayers,
 		},
 		ConnectToken: connectToken,
 	})

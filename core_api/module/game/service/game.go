@@ -83,7 +83,6 @@ type ResponsCreateGameDTO struct {
 	Name       string
 	Password   *string
 	MaxPlayers int
-	Users      []primitive.ObjectID
 }
 
 func (gs *GameService) CreateGame(ctx context.Context, requestCreateGameDTO RequestCreateGameDTO) (*ResponsCreateGameDTO, error) {
@@ -94,7 +93,6 @@ func (gs *GameService) CreateGame(ctx context.Context, requestCreateGameDTO Requ
 		Password:   requestCreateGameDTO.Password,
 		MaxPlayers: requestCreateGameDTO.MaxPlayers,
 		OwnerId:    requestCreateGameDTO.UserId,
-		Users:      []primitive.ObjectID{requestCreateGameDTO.UserId},
 		UpdatedAt:  timeNow,
 		CreatedAt:  timeNow,
 	}
@@ -110,7 +108,6 @@ func (gs *GameService) CreateGame(ctx context.Context, requestCreateGameDTO Requ
 		Name:       requestCreateGameDTO.Name,
 		Password:   requestCreateGameDTO.Password,
 		MaxPlayers: requestCreateGameDTO.MaxPlayers,
-		Users:      modelGame.Users,
 	}, nil
 }
 
@@ -126,7 +123,6 @@ type ResponsJoinGameDTO struct {
 	Name       string
 	Password   *string
 	MaxPlayers int
-	Users      []primitive.ObjectID
 }
 
 func (gs *GameService) JoinGame(ctx context.Context, requestJoinGameDTO RequestJoinGameDTO) (*ResponsJoinGameDTO, error) {
@@ -149,7 +145,6 @@ func (gs *GameService) JoinGame(ctx context.Context, requestJoinGameDTO RequestJ
 		Name:       modelGame.Name,
 		Password:   modelGame.Password,
 		MaxPlayers: modelGame.MaxPlayers,
-		Users:      append(modelGame.Users, requestJoinGameDTO.UserId),
 	}, nil
 }
 

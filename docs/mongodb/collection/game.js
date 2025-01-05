@@ -4,9 +4,7 @@ game = {
 	"name": "string",
 	"password": "string",
 	"ownerId": "ObjectId",
-	"users": [
-        "ObjectId",
-    ],
+	"players": "[]ObjectId", // -> player.js
 	"maxPlayers": "int",
 	"updatedAt": "date",
 	"createdAt": "date",
