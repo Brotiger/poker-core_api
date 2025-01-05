@@ -12,7 +12,6 @@ import (
 	pkgService "github.com/Brotiger/poker-core_api/pkg/service"
 	"github.com/gofiber/fiber/v2"
 	log "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // @Summary Обновление токена
@@ -54,12 +53,6 @@ func (a *AuthController) Refresh(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	userId, err := primitive.ObjectIDFromHex(tokenClaims.UserId)
-	if err != nil {
-		log.Errorf("failed to get user id, error: %v", err)
-		return fiber.NewError(fiber.StatusInternalServerError)
-	}
-
 	exist, err := a.RefreshTokenService.CheckRefreshToken(ctx, requetRefresh.RefreshToken)
 	if err != nil {
 		log.Errorf("failed to check refresh token, error: %v", err)
@@ -72,7 +65,7 @@ func (a *AuthController) Refresh(c *fiber.Ctx) error {
 		})
 	}
 
-	dtoToken, err := a.RefreshTokenService.GenerateTokens(ctx, userId)
+	dtoToken, err := a.RefreshTokenService.GenerateTokens(ctx, tokenClaims.UserId)
 	if err != nil {
 		log.Errorf("failed to generate tokens, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)

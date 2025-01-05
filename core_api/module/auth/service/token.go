@@ -35,7 +35,7 @@ func (rt *RefreshTokenService) GenerateTokens(ctx context.Context, userId primit
 	}
 
 	accessTokenClaims := pkgModel.JWTClaims{
-		UserId: userId.Hex(),
+		UserId: userId,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Duration(config.Cfg.JWT.AccessTokenExpireAt) * time.Minute).Unix(),
 		},
@@ -48,7 +48,7 @@ func (rt *RefreshTokenService) GenerateTokens(ctx context.Context, userId primit
 	}
 
 	refreshTokenClaims := pkgModel.JWTClaims{
-		UserId: userId.Hex(),
+		UserId: userId,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Duration(config.Cfg.JWT.RefreshTokenExpireAt) * time.Minute).Unix(),
 		},
