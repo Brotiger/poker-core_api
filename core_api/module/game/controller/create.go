@@ -51,7 +51,7 @@ func (gh *GameController) Create(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	modelGame, err := gh.GameService.CreateGame(ctx, service.RequestCreateGameDTO{
+	modelGame, err := gh.gameService.CreateGame(ctx, service.RequestCreateGameDTO{
 		UserId:     userId,
 		Name:       requetCreate.Name,
 		Password:   requetCreate.Password,
@@ -62,7 +62,10 @@ func (gh *GameController) Create(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	connectToken, err := gh.TokenService.GenerateConnectToken(ctx, modelGame.Id)
+	connectToken, err := gh.connectTokenService.GenerateConnectToken(ctx, service.RequestGenerateConnectToken{
+		GameId: modelGame.Id,
+		UserId: userId,
+	})
 	if err != nil {
 		log.Errorf("failed to generate connect token, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)

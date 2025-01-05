@@ -51,7 +51,7 @@ func (gh *GameController) Join(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	modelGame, err := gh.GameService.JoinGame(ctx, service.RequestJoinGameDTO{
+	modelGame, err := gh.gameService.JoinGame(ctx, service.RequestJoinGameDTO{
 		UserId:   userId,
 		GameId:   requetJoin.GameId,
 		Password: requetJoin.Password,
@@ -61,7 +61,10 @@ func (gh *GameController) Join(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	connectToken, err := gh.TokenService.GenerateConnectToken(ctx, modelGame.Id)
+	connectToken, err := gh.connectTokenService.GenerateConnectToken(ctx, service.RequestGenerateConnectToken{
+		GameId: modelGame.Id,
+		UserId: userId,
+	})
 	if err != nil {
 		log.Errorf("failed to generate connect token, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)

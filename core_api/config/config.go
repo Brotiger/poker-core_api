@@ -9,10 +9,12 @@ import (
 const TagVersion = "0.0.1"
 
 type Config struct {
-	App     *App
-	Fiber   *Fiber
-	MongoDB *MongoDB
-	Nats    *Nats
+	App          *App
+	Fiber        *Fiber
+	MongoDB      *MongoDB
+	Nats         *Nats
+	JWT          *JWT
+	ConnectToken *ConnectToken
 }
 
 var Cfg *Config
@@ -22,6 +24,8 @@ func init() {
 	fiberConfig := &Fiber{}
 	mongodbConfig := &MongoDB{}
 	natsConfig := &Nats{}
+	jwtConfig := &JWT{}
+	connectTokenConfig := &ConnectToken{}
 
 	if err := env.Parse(appConfig); err != nil {
 		log.Fatalf("failed to parse app config, error: %v", err)
@@ -39,10 +43,20 @@ func init() {
 		log.Fatalf("failed to parse nats config, error: %v", err)
 	}
 
+	if err := env.Parse(jwtConfig); err != nil {
+		log.Fatalf("failed to parse jwt config, error: %v", err)
+	}
+
+	if err := env.Parse(connectTokenConfig); err != nil {
+		log.Fatalf("failed to parse connect token config, error: %v", err)
+	}
+
 	Cfg = &Config{
-		App:     appConfig,
-		Fiber:   fiberConfig,
-		MongoDB: mongodbConfig,
-		Nats:    natsConfig,
+		App:          appConfig,
+		Fiber:        fiberConfig,
+		MongoDB:      mongodbConfig,
+		Nats:         natsConfig,
+		JWT:          jwtConfig,
+		ConnectToken: connectTokenConfig,
 	}
 }

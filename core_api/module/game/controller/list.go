@@ -47,7 +47,7 @@ func (gh *GameController) List(c *fiber.Ctx) error {
 		})
 	}
 
-	responseGetGameListDTO, total, err := gh.GameService.GetGameList(ctx, service.RequestGetGameListDTO{
+	responseGetGameListDTO, total, err := gh.gameService.GetGameList(ctx, service.RequestGetGameListDTO{
 		Name: requetList.Name,
 		Size: requetList.Size,
 		From: requetList.From,

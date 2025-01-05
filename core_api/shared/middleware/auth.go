@@ -3,6 +3,7 @@ package middleware
 import (
 	"errors"
 
+	"github.com/Brotiger/poker-core_api/core_api/config"
 	"github.com/Brotiger/poker-core_api/core_api/shared/response"
 	"github.com/Brotiger/poker-core_api/pkg/service"
 	"github.com/gofiber/fiber/v2"
@@ -26,7 +27,7 @@ func (am *AuthMiddleware) Token(c *fiber.Ctx) error {
 		})
 	}
 
-	tokenClaims, err := am.tokenService.VerifyToken(token)
+	tokenClaims, err := am.tokenService.VerifyToken(token, config.Cfg.JWT.Secret)
 	if err != nil {
 		if errors.Is(err, service.ErrInvalidToken) {
 			return c.Status(fiber.StatusUnauthorized).JSON(response.Unauthorized{

@@ -30,7 +30,7 @@ func (gh *GameController) Start(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}
 
-	if err := gh.GameService.StartGame(ctx, userId); err != nil {
+	if err := gh.gameService.StartGame(ctx, userId); err != nil {
 		log.Errorf("faile to start game, error: %v", err)
 		return fiber.NewError(fiber.StatusInternalServerError)
 	}

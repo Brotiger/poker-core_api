@@ -5,13 +5,13 @@ import (
 )
 
 type GameController struct {
-	GameService  *service.GameService
-	TokenService *service.TokenService
+	gameService         *service.GameService
+	connectTokenService *service.ConnectTokenService
 }
 
 func NewGameController() *GameController {
 	return &GameController{
-		GameService:  service.NewGameService(),
-		TokenService: service.NewTokenService(),
+		gameService:         service.NewGameService(),
+		connectTokenService: service.NewConnectTokenService(),
 	}
 }

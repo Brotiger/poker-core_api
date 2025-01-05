@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Brotiger/poker-core_api/core_api/config"
 	"github.com/Brotiger/poker-core_api/pkg/model"
 	"github.com/golang-jwt/jwt"
 )
@@ -20,9 +19,9 @@ func NewTokenService() *TokenService {
 	return &TokenService{}
 }
 
-func (ts *TokenService) VerifyToken(tokenString string) (*model.JWTClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &model.JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(config.Cfg.App.Jwt.Secret), nil
+func (ts *TokenService) VerifyToken(jwtToken, secret string) (*model.JWTClaims, error) {
+	token, err := jwt.ParseWithClaims(jwtToken, &model.JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse with claims, error: %w", err)

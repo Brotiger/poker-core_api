@@ -42,7 +42,7 @@ func (a *AuthController) Refresh(c *fiber.Ctx) error {
 		})
 	}
 
-	tokenClaims, err := a.TokenService.VerifyToken(requetRefresh.RefreshToken)
+	tokenClaims, err := a.TokenService.VerifyToken(requetRefresh.RefreshToken, config.Cfg.JWT.Secret)
 	if err != nil {
 		if err == pkgService.ErrInvalidToken {
 			return c.Status(fiber.StatusUnauthorized).JSON(sharedResponse.Unauthorized{

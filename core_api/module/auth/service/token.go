@@ -37,12 +37,12 @@ func (rt *RefreshTokenService) GenerateTokens(ctx context.Context, userId primit
 	accessTokenClaims := pkgModel.JWTClaims{
 		UserId: userId.Hex(),
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Duration(config.Cfg.App.Jwt.AccessTokenExpireAt) * time.Minute).Unix(),
+			ExpiresAt: time.Now().Add(time.Duration(config.Cfg.JWT.AccessTokenExpireAt) * time.Minute).Unix(),
 		},
 	}
 
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessTokenClaims)
-	accessTokenString, err := accessToken.SignedString([]byte(config.Cfg.App.Jwt.Secret))
+	accessTokenString, err := accessToken.SignedString([]byte(config.Cfg.JWT.Secret))
 	if err != nil {
 		return nil, fmt.Errorf("failed to signed string, error: %w", err)
 	}
@@ -50,12 +50,12 @@ func (rt *RefreshTokenService) GenerateTokens(ctx context.Context, userId primit
 	refreshTokenClaims := pkgModel.JWTClaims{
 		UserId: userId.Hex(),
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Duration(config.Cfg.App.Jwt.RefreshTokenExpireAt) * time.Minute).Unix(),
+			ExpiresAt: time.Now().Add(time.Duration(config.Cfg.JWT.RefreshTokenExpireAt) * time.Minute).Unix(),
 		},
 	}
 
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshTokenClaims)
-	refreshTokenString, err := refreshToken.SignedString([]byte(config.Cfg.App.Jwt.Secret))
+	refreshTokenString, err := refreshToken.SignedString([]byte(config.Cfg.JWT.Secret))
 	if err != nil {
 		return nil, fmt.Errorf("failed to signed string, error %w", err)
 	}
